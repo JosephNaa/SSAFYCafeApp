@@ -1,7 +1,6 @@
 package com.ssafy.smartstoredb
 
 import android.app.NotificationChannel
-import com.ssafy.smartstoredb.activity.MainActivity
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -17,6 +16,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.ssafy.smartstoredb.ui.main.MainActivity
 
 class MyFirebaseMessagingService: FirebaseMessagingService() {
 
