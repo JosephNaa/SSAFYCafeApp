@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@color/coffee_light_white"
+    android:padding="30dp">
+    <LinearLayout
+        android:id="@+id/linear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:id="@+id/distance_text"
+            style="@style/Text.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:text="매장과의 거리가 350m 입니다. "
+            android:textSize="20dp" />
+        <ImageView
+            android:id="@+id/btnMap"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/map"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MENU"
+        android:textSize="30dp"
+        android:textColor="@color/coffee_point_red"
+        style="@style/Text.Title"
+        android:layout_below="@+id/linear"
+        android:layout_marginBottom="20dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_below="@+id/menu"
+        tools:layout_height="1500dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingBtn"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:src="@drawable/shopping_cart"
+        app:backgroundTint="@color/coffee_brown_light"
+        app:fabSize="normal"
+        app:elevation="0dp"
+        app:useCompatPadding="false" />
+
+</RelativeLayout>

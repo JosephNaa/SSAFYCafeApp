@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@color/coffee_light_white"
+    android:paddingTop="30dp">
+    <LinearLayout
+        android:paddingHorizontal="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="장바구니"
+            android:textSize="30dp"
+            android:layout_weight="1"
+            android:textColor="@color/coffee_point_red"
+            style="@style/Text.Title"
+            android:layout_marginBottom="20dp"/>
+        <Button
+            android:id="@+id/btnShop"
+            android:layout_width="90dp"
+            android:layout_height="40dp"
+            android:text="매장"
+            app:backgroundTint="@null"
+            android:background="@drawable/button_color"
+            android:textColor="@color/coffee_dark_brown"
+            style="@style/Text.Title"/>
+        <Button
+            android:id="@+id/btnTakeout"
+            android:layout_width="90dp"
+            android:layout_height="40dp"
+            android:text="T-out"
+            app:backgroundTint="@null"
+            android:background="@drawable/button_non_color"
+            android:textColor="@color/coffee_dark_brown"
+            style="@style/Text.Title"/>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewShoppingList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="30dp"/>
+
+    <LinearLayout
+        android:paddingHorizontal="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/textShoppingCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Text.Title"
+            android:layout_weight="1"
+            android:text="총 3개"/>
+        <TextView
+            android:id="@+id/textShoppingMoney"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Text.Title"
+            android:text="19,500 원"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnOrder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/coffee_point_red"
+        android:text="주문하기"/>
+
+</LinearLayout>

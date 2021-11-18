@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/coffee_light_white"
+    android:padding="30dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/user" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textUserName"
+                style="@style/Text.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="벼락부자핫도그님"
+                android:textSize="30dp" />
+
+            <TextView
+                style="@style/Text.light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="안녕하세요."
+                android:textSize="20dp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/logout"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="right"
+            android:src="@drawable/logout" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/imageLevel"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/seeds"/>
+        <TextView
+            android:id="@+id/textUserLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Text.Title"
+            android:textSize="20dp"
+            android:text="씨앗 2단계"/>
+        <ProgressBar
+            android:id="@+id/proBarUserLevel"
+            android:layout_width="200dp"
+            android:layout_height="20dp"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:indeterminateTint="@color/coffee_brown" />
+
+        <TextView
+            android:id="@+id/textUserNextLevel"
+            style="@style/Text.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="4dp"
+            android:text="0/10"
+            android:textSize="10dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textLevelRest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="다음 레벨까지 8잔 남았습니다."
+        android:layout_marginBottom="20dp"
+        android:textColor="@color/coffee_light_gray"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:scaleType="fitCenter"
+        android:layout_gravity="center"
+        android:src="@drawable/space"
+        android:layout_marginBottom="30dp"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="주문내역"
+        android:textSize="25dp"
+        style="@style/Text.Title"
+        android:layout_marginBottom="20dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewOrder"
+        android:layout_width="match_parent"
+        android:layout_height="250dp" />
+
+</LinearLayout>

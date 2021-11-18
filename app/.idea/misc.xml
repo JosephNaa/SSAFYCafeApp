@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/SSAFY/Smartstore_Component-starter/app/src/main/res/layout/activity_login.xml" value="0.36614583333333334" />
+        <entry key="..\:/SSAFY/Smartstore_Component-starter/app/src/main/res/layout/activity_main.xml" value="0.36614583333333334" />
+        <entry key="..\:/SSAFY/Smartstore_Component-starter/app/src/main/res/layout/dialog_map_store.xml" value="0.36614583333333334" />
+        <entry key="..\:/SSAFY/Smartstore_Component-starter/app/src/main/res/layout/dialog_menu_comment.xml" value="0.36614583333333334" />
+        <entry key="..\:/SSAFY/Smartstore_Component-starter/app/src/main/res/layout/fragment_join.xml" value="0.36614583333333334" />
+        <entry key="..\:/SSAFY/Smartstore_Component-starter/app/src/main/res/layout/fragment_login.xml" value="0.36614583333333334" />
+        <entry key="..\:/SSAFY/Smartstore_Component-starter/app/src/main/res/layout/fragment_map.xml" value="0.2046875" />
+        <entry key="..\:/SSAFY/Smartstore_Component-starter/app/src/main/res/layout/fragment_menu_detail.xml" value="0.2046875" />
+        <entry key="..\:/SSAFY/Smartstore_Component-starter/app/src/main/res/layout/fragment_order.xml" value="0.20520833333333333" />
+        <entry key="..\:/SSAFY/Smartstore_Component-starter/app/src/main/res/layout/fragment_order_detail.xml" value="0.2046875" />
+        <entry key="..\:/SSAFY/Smartstore_Component-starter/app/src/main/res/layout/fragment_shopping_list.xml" value="0.33" />
+        <entry key="..\:/SSAFY/Smartstore_Component-starter/app/src/main/res/layout/list_item_comment.xml" value="0.33" />
+        <entry key="..\:/SSAFY/Smartstore_Component-starter/app/src/main/res/layout/list_item_notice.xml" value="0.20520833333333333" />
+        <entry key="..\:/SSAFY/Smartstore_Component-starter/app/src/main/res/layout/list_item_shopping_list.xml" value="0.2046875" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

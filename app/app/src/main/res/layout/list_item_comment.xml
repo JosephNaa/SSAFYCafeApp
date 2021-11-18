@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="10dp">
+
+    <TextView
+        android:id="@+id/textNoticeContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="너무 맛있어요."
+        android:textSize="15dp"
+        android:layout_weight="1"
+        style="@style/Text.Regular"/>
+    <!--  수정  -->
+    <EditText
+        android:id="@+id/et_comment_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="15sp"
+        tools:text="댓글 입니다."
+        tools:visibility="gone"
+        android:layout_weight="1"
+        style="@style/Text.Regular"/>
+
+    <ImageView
+        android:id="@+id/iv_modify_accept_comment"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/button_regular"
+        app:backgroundTint="@null"
+        app:srcCompat="@android:drawable/ic_menu_save"
+        tools:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/iv_modify_cancel_comment"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/button_regular"
+        app:backgroundTint="@null"
+        app:srcCompat="@android:drawable/ic_menu_revert"
+        tools:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/iv_modify_comment"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/button_regular"
+        app:backgroundTint="@null"
+        app:srcCompat="@android:drawable/ic_menu_edit" />
+
+    <ImageView
+        android:id="@+id/iv_delete_comment"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/button_regular"
+        app:backgroundTint="@null"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+
+</LinearLayout>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_page_1"
+        android:enabled="true"
+        android:title="Home"
+        android:icon="@drawable/home"/>
+    <item
+        android:id="@+id/navigation_page_2"
+        android:enabled="true"
+        android:title="Order"
+        android:icon="@drawable/shopping_list"/>
+    <item
+        android:id="@+id/navigation_page_3"
+        android:enabled="true"
+        android:title="Mypage"
+        android:icon="@drawable/user"/>
+</menu>
