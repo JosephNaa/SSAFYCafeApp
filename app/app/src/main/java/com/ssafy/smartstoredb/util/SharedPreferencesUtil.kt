@@ -2,10 +2,7 @@ package com.ssafy.smartstoredb.util
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
-import com.ssafy.smartstoredb.ApplicationClass
-import com.ssafy.smartstoredb.dto.User
+import com.ssafy.smartstoredb.model.User
 
 class SharedPreferencesUtil (context: Context) {
     val SHARED_PREFERENCES_NAME = "smartstore_preference"
@@ -14,7 +11,7 @@ class SharedPreferencesUtil (context: Context) {
         context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
     //사용자 정보 저장
-    fun putUser(user:User){
+    fun putUser(user: User){
         val editor = preferences.edit()
         editor.putString("id", user.id)
         editor.putString("name", user.name)
@@ -22,7 +19,7 @@ class SharedPreferencesUtil (context: Context) {
         editor.apply()
     }
 
-    fun getUser(): User{
+    fun getUser(): User {
         val id = preferences.getString("id", "")
         if (id != ""){
             val name = preferences.getString("name", "")
