@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.smartstoredb.R
-import com.ssafy.smartstoredb.model.Product
+import com.ssafy.smartstoredb.model.dto.Product
 
 private const val TAG = "MenuAdapter_싸피"
 class MenuAdapter(val context: Context, val prodList:List<Product>) :RecyclerView.Adapter<MenuAdapter.MenuHolder>(){

@@ -8,11 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.ssafy.smartstoredb.activity.MainActivity
 import com.ssafy.smartstoredb.ui.main.order.adapter.OrderDetailListAdapter
 import com.ssafy.smartstoredb.databinding.FragmentOrderDetailBinding
-import com.ssafy.smartstoredb.model.Order
+import com.ssafy.smartstoredb.model.dto.Order
 import com.ssafy.smartstoredb.data.service.OrderService
+import com.ssafy.smartstoredb.ui.main.MainActivity
 import com.ssafy.smartstoredb.util.CommonUtils
 
 // 주문상세화면, My탭  - 주문내역 선택시 팝업

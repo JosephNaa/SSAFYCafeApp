@@ -21,11 +21,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.model.LatLng
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
-import com.ssafy.smartstoredb.activity.MainActivity
-import com.ssafy.smartstoredb.ui.main.adapter.MenuAdapter
 import com.ssafy.smartstoredb.databinding.FragmentOrderBinding
-import com.ssafy.smartstoredb.model.Product
+import com.ssafy.smartstoredb.model.dto.Product
 import com.ssafy.smartstoredb.data.service.ProductService
+import com.ssafy.smartstoredb.ui.main.MainActivity
+import com.ssafy.smartstoredb.ui.main.order.adapter.MenuAdapter
 
 // 하단 주문 탭
 private const val TAG = "OrderFragment_싸피"

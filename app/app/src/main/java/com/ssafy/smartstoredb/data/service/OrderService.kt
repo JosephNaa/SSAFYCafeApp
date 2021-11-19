@@ -2,8 +2,8 @@ package com.ssafy.smartstoredb.data.service
 
 import android.content.Context
 import androidx.core.content.contentValuesOf
-import com.ssafy.smartstoredb.model.Order
-import com.ssafy.smartstoredb.model.OrderDetail
+import com.ssafy.smartstoredb.model.dto.Order
+import com.ssafy.smartstoredb.model.dto.OrderDetail
 
 private const val TAG = "OrderService_싸피"
 

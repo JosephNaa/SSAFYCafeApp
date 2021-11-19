@@ -1,4 +1,4 @@
-package com.ssafy.smartstoredb.model
+package com.ssafy.smartstoredb.model.dto
 
 data class Comment(
     val id: Int = -1,

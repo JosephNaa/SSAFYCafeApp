@@ -9,7 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.smartstoredb.R
-import com.ssafy.smartstoredb.model.UserOrderDetail
+import com.ssafy.smartstoredb.model.dto.UserOrderDetail
 import com.ssafy.smartstoredb.util.CommonUtils
 
 private const val TAG = "OrderAdapter_싸피"
