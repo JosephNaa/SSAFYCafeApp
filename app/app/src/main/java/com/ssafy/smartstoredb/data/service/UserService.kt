@@ -1,98 +1,216 @@
 package com.ssafy.smartstoredb.data.service
 
-import android.content.Context
-import androidx.core.content.contentValuesOf
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.ssafy.smartstore.response.LatestOrderResponse
+import com.ssafy.smartstore.util.RetrofitCallback
+import com.ssafy.smartstore.util.RetrofitUtil
+import com.ssafy.smartstoredb.model.dto.Comment
 import com.ssafy.smartstoredb.model.dto.User
-import com.ssafy.smartstoredb.model.dto.UserOrderDetail
+import com.ssafy.smartstoredb.model.dto.UserLevel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 private const val TAG = "UserService_싸피"
-class UserService(context: Context) : AbstractService(context) {
-    val TABLE = "t_user"
-    val COLUMNS = arrayOf("id", "name", "pass", "stamps")
-
-    fun login(id: String, password: String) : User {
-        var user: User
-
-        getReadableDatabase().use {
-            it.query(TABLE, COLUMNS, "id = ? and pass = ?", arrayOf(id, password), null, null, null).use{
-                if (it.moveToNext()) {
-                    user = User(it.getString(0), it.getString(1), it.getString(2), it.getInt(3))
-                }else{
-                    user = User()
+class UserService {
+    fun login(user:User, callback: RetrofitCallback<User>)  {
+        RetrofitUtil.userService.login(user).enqueue(object : Callback<User> {
+            override fun onResponse(call: Call<User>, response: Response<User>) {
+                val res = response.body()
+                if(response.code() == 200){
+                    if (res != null) {
+                        callback.onSuccess(response.code(), res)
+                    }
+                } else {
+                    callback.onFailure(response.code())
                 }
             }
-        }
-        return user
-    }
 
-    //회원 테이블에 있으면 false, 없으면 true를 리턴
-    fun isAvailableId(id:String) : Boolean{
-        var result : Boolean
-        getReadableDatabase().use {
-            it.query(TABLE, COLUMNS, "id=?", arrayOf(id), null, null, null).use {
-                result = !it.moveToNext()
+            override fun onFailure(call: Call<User>, t: Throwable) {
+                callback.onError(t)
             }
-        }
-        return result
+        })
     }
 
-    fun join(id: String, name:String, password: String) : Long{
-        var newUser = contentValuesOf("id" to id, "name" to name, "pass" to password)
-
-        getWritableDatabase().use {
-             return it.insert(TABLE, null, newUser)
-        }
-    }
-
-    //주문내역 조회
-    fun getOrderList(id:String): ArrayList<UserOrderDetail>{
-        var list = arrayListOf<UserOrderDetail>()
-
-        getReadableDatabase().use { db ->
-            var sql = """
-                select 
-                    bb.id as order_id,
-                    strftime('%Y.%m.%d.%H:%M', bb.order_time, '+9 hours') order_time,
-                    bb.quantity, 
-                    bb.sum_price, 
-                    prod.img,
-                    prod.id, 
-                    name 
-                from t_product prod, 
-                (select 
-                    a.o_id as id, 
-                    sum(quantity) as quantity, 
-                    a.order_time, 
-                    sum(b.quantity * product.price) as sum_price,
-                    min(product_id) min_id
-                from t_order a, t_order_detail b, t_product product
-                where a.user_id = ?
-                and a.o_id = b.order_id
-                and b.product_id = product.id
-                group by o_id
-                ) bb
-                where prod.id = bb.min_id
-            """.trimIndent()
-
-            db.rawQuery(sql, arrayOf(id)).use {
-                if (it.moveToFirst()) {
-                    do{
-                        list.add(
-                            UserOrderDetail( it.getInt(0),
-                                it.getString(1),
-                                it.getInt(2),
-                                it.getInt(3),
-                                it.getString(4).split(".")[0],
-                                it.getInt(5),
-                                it.getString(6) ) )
-                    }while(it.moveToNext())
+    fun join(user: User, callback: RetrofitCallback<Boolean>) {
+        RetrofitUtil.userService.insert(user).enqueue(object: Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                val res = response.body()
+                if (response.code() == 200) {
+                    if (res != null) {
+                        callback.onSuccess(response.code(), res)
+                    }
+                } else {
+                    callback.onFailure(response.code())
                 }
-
             }
 
-        }
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                callback.onError(t)
+            }
 
-        return list
+        })
+    }
+
+    fun isAvailable(id: String, callback: RetrofitCallback<Boolean>) {
+        RetrofitUtil.userService.isUsedId(id).enqueue(object: Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                val res = response.body()
+                if (response.code() == 200) {
+                    if (res != null) {
+                        callback.onSuccess(response.code(), res)
+                    }
+                } else {
+                    callback.onFailure(response.code())
+                }
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                callback.onError(t)
+            }
+        })
+    }
+
+    fun insertComment(comment: Comment, callback: RetrofitCallback<Boolean>){
+        RetrofitUtil.commentService.insert(comment).enqueue(object : Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                val res = response.body()
+                if (response.code() == 200) {
+                    if (res != null) {
+                        callback.onSuccess(response.code(), res)
+                    }
+                } else {
+                    callback.onFailure(response.code())
+                }
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                callback.onError(t)
+            }
+
+        })
+    }
+
+    fun updateComment(comment: Comment, callback: RetrofitCallback<Boolean>) {
+        RetrofitUtil.commentService.update(comment).enqueue(object: Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                val res = response.body()
+                if (response.code() == 200) {
+                    if (res != null) {
+                        callback.onSuccess(response.code(), res)
+                    }
+                } else {
+                    callback.onFailure(response.code())
+                }
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                callback.onError(t)
+            }
+
+        })
+    }
+
+    fun deleteComment(comment: Comment, callback: RetrofitCallback<Boolean>) {
+        RetrofitUtil.commentService.delete(comment.id).enqueue(object: Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                val res = response.body()
+                if (response.code() == 200) {
+                    if (res != null) {
+                        callback.onSuccess(response.code(), res)
+                    }
+                } else {
+                    callback.onFailure(response.code())
+                }
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                callback.onError(t)
+            }
+
+        })
+    }
+
+    fun getOrderList(id: String, callback: RetrofitCallback<List<LatestOrderResponse>>) {
+        RetrofitUtil.orderService.getLastMonthOrder(id).enqueue(object:
+            Callback<List<LatestOrderResponse>> {
+            override fun onResponse(
+                call: Call<List<LatestOrderResponse>>,
+                response: Response<List<LatestOrderResponse>>
+            ) {
+                val res = response.body()
+                if (response.code() == 200) {
+                    if (res != null) {
+                        callback.onSuccess(response.code(), res)
+                    }
+                } else {
+                    callback.onFailure(response.code())
+                }
+            }
+
+            override fun onFailure(call: Call<List<LatestOrderResponse>>, t: Throwable) {
+                callback.onError(t)
+            }
+
+        })
+    }
+
+    fun getInfo(id: String, callback: RetrofitCallback<HashMap<String, Any>>)  {
+        RetrofitUtil.userService.getInfo(id).enqueue(object : Callback<HashMap<String, Any>> {
+            override fun onResponse(call: Call<HashMap<String, Any>>, response: Response<HashMap<String, Any>>) {
+                val res = response.body()
+
+                if(response.code() == 200){
+                    if (res != null) {
+                        callback.onSuccess(response.code(), res)
+                    }
+                } else {
+                    callback.onFailure(response.code())
+                }
+            }
+
+            override fun onFailure(call: Call<HashMap<String, Any>>, t: Throwable) {
+                callback.onError(t)
+            }
+        })
+    }
+
+    fun getLevelInfo(userId:String, callback: RetrofitCallback<UserLevel>) {
+        var result = UserLevel("", 0, 0, "")
+        RetrofitUtil.userService.getInfo(userId).enqueue(object : Callback<HashMap<String, Any>> {
+            override fun onResponse(
+                call: Call<HashMap<String, Any>>,
+                response: Response<HashMap<String, Any>>
+            ) {
+                val res = response.body()
+                if (response.code() == 200) {
+                    if (res != null) {
+                        val grade = res["grade"] as Map<String, Any>
+                        val stamp = res["user"] as Map<String, Any>
+                        val title = grade["title"].toString()
+                        val unit = grade["step"].toString().toFloat().toInt()
+                        val max = (grade["to"].toString().toFloat().toInt()) + (stamp["stamps"].toString().toFloat().toInt())
+                        val img = grade["img"].toString()
+                        //Log.d(TAG, "onResponse: ${grade["img"]} ${grade["step"]} ${grade["to"]} ${grade["title"]} ${stamp["stamps"]}")
+                        result.title = title
+                        result.unit = unit
+                        result.max = max
+                        result.img = img
+                        Log.d(TAG, "onResponse: $title $unit $max $img")
+                        callback.onSuccess(response.code(), UserLevel(title,unit,max,img))
+                    }
+                } else {
+                    Log.d(TAG, "onResponse: Error Code ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<HashMap<String, Any>>, t: Throwable) {
+                Log.d(TAG, t.message ?: "주문 중 통신오류")
+            }
+
+        })
     }
 }

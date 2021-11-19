@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.model.LatLng
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import com.ssafy.smartstore.util.RetrofitCallback
 import com.ssafy.smartstoredb.databinding.FragmentOrderBinding
 import com.ssafy.smartstoredb.model.dto.Product
 import com.ssafy.smartstoredb.data.service.ProductService
@@ -185,16 +186,7 @@ class OrderFragment : Fragment(){
 
 
         initData()
-        initAdapter()
         binding.distanceText.text = " 매장까지의 거리는 ${distance(mylocation.latitude,mylocation.longitude,mylocation.latitude+0.002,mylocation.longitude+0.002,"meter").toInt()}m 입니다"
-
-        binding.recyclerViewMenu.apply {
-            layoutManager = GridLayoutManager(context,3)
-            adapter = menuAdapter
-            //원래의 목록위치로 돌아오게함
-            adapter!!.stateRestorationPolicy =
-                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-        }
 
         binding.floatingBtn.setOnClickListener{
             //장바구니 이동
@@ -207,18 +199,39 @@ class OrderFragment : Fragment(){
     }
 
     private fun initData(){
-        prodList = ProductService(requireContext()).getProductList()
-//        Log.d(TAG, "initData: prodList: ${prodList}")
+        ProductService().getProductList(ProductCallback())
     }
 
-    private fun initAdapter(){
-        menuAdapter = MenuAdapter(requireContext(), prodList)
-        menuAdapter.setItemClickListener(object : MenuAdapter.ItemClickListener{
-            override fun onClick(view: View, position: Int, productId:Int) {
-                mainActivity.openFragment(3, "productId", productId)
+    inner class ProductCallback: RetrofitCallback<List<Product>> {
+        override fun onSuccess( code: Int, productList: List<Product>) {
+            productList.let {
+                Log.d(TAG, "onSuccess: ${productList}")
+                menuAdapter = MenuAdapter(productList)
+                menuAdapter.setItemClickListener(object : MenuAdapter.ItemClickListener{
+                    override fun onClick(view: View, position: Int, productId:Int) {
+                        mainActivity.openFragment(3, "productId", productId)
+                    }
+                })
             }
-        })
 
+            binding.recyclerViewMenu.apply {
+                layoutManager = GridLayoutManager(context,3)
+                adapter = menuAdapter
+                //원래의 목록위치로 돌아오게함
+                adapter!!.stateRestorationPolicy =
+                    RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            }
+
+            Log.d(TAG, "ProductCallback: $productList")
+        }
+
+        override fun onError(t: Throwable) {
+            Log.d(TAG, t.message ?: "유저 정보 불러오는 중 통신오류")
+        }
+
+        override fun onFailure(code: Int) {
+            Log.d(TAG, "onResponse: Error Code $code")
+        }
     }
 
     private val listener = object : LocationListener {

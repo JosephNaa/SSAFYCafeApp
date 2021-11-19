@@ -2,18 +2,22 @@ package com.ssafy.smartstoredb.ui.main.order.fragment
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.ssafy.smartstore.response.OrderDetailResponse
 import com.ssafy.smartstoredb.ui.main.order.adapter.OrderDetailListAdapter
 import com.ssafy.smartstoredb.databinding.FragmentOrderDetailBinding
 import com.ssafy.smartstoredb.model.dto.Order
 import com.ssafy.smartstoredb.data.service.OrderService
 import com.ssafy.smartstoredb.ui.main.MainActivity
 import com.ssafy.smartstoredb.util.CommonUtils
+import java.text.SimpleDateFormat
+import java.util.*
 
 // 주문상세화면, My탭  - 주문내역 선택시 팝업
 private const val TAG = "OrderDetailFragment_싸피"
@@ -22,7 +26,6 @@ class OrderDetailFragment : Fragment(){
     private lateinit var mainActivity: MainActivity
 
     private var orderId = -1
-    private lateinit var orderWithDetails: Order
 
     private lateinit var binding:FragmentOrderDetailBinding
     override fun onAttach(context: Context) {
@@ -51,32 +54,46 @@ class OrderDetailFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initData()
-        initView()
-        initAdapter()
 
+        initData()
     }
 
     private fun initData(){
-        orderWithDetails = OrderService(mainActivity).getOrderWithDetails(orderId)
+        val orderDetails = OrderService().getOrderDetails(orderId)
+        orderDetails.observe(
+            viewLifecycleOwner,
+            { orderDetails ->
+                orderDetails.let {
+                    orderDetailListAdapter = OrderDetailListAdapter(mainActivity, orderDetails)
+                }
+
+                binding.recyclerViewOrderDetailList.apply {
+                    val linearLayoutManager = LinearLayoutManager(context)
+                    linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+                    layoutManager = linearLayoutManager
+                    adapter = orderDetailListAdapter
+                    //원래의 목록위치로 돌아오게함
+                    adapter!!.stateRestorationPolicy =
+                        RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+                }
+
+                setOrderDetailScreen(orderDetails)
+
+                Log.d(TAG, "onViewCreated: $orderDetails")
+            }
+        )
     }
 
-    private fun initView(){
-        binding.tvOrderDate.text = orderWithDetails.orderTime
-        binding.tvTotalPrice.text = CommonUtils.makeComma(orderWithDetails.totalPrice)
-    }
+    // OrderDetail 페이지 화면 구성
+    private fun setOrderDetailScreen(orderDetails: List<OrderDetailResponse>){
+        val dateFormat = SimpleDateFormat("yyyy.MM.dd HH시 mm분 ss초")
+        dateFormat.timeZone = TimeZone.getTimeZone("UTC")
 
-    private fun initAdapter(){
-        orderDetailListAdapter = OrderDetailListAdapter(mainActivity, orderWithDetails.details)
-        binding.recyclerViewOrderDetailList.apply {
-            val linearLayoutManager = LinearLayoutManager(context)
-            linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-            layoutManager = linearLayoutManager
-            adapter = orderDetailListAdapter
-            //원래의 목록위치로 돌아오게함
-            adapter!!.stateRestorationPolicy =
-                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-        }
+        binding.tvOrderStatus.text = CommonUtils.isOrderCompleted(orderDetails[0])
+        binding.tvOrderDate.text = dateFormat.format(orderDetails[0].orderDate)
+        var totalPrice = 0
+        orderDetails.forEach { totalPrice += it.totalPrice }
+        binding.tvTotalPrice.text = "$totalPrice 원"
     }
 
 

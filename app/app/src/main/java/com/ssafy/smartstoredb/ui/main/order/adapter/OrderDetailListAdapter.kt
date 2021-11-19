@@ -7,12 +7,15 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.ssafy.smartstore.response.OrderDetailResponse
 import com.ssafy.smartstoredb.R
+import com.ssafy.smartstoredb.config.ApplicationClass
 import com.ssafy.smartstoredb.model.dto.OrderDetail
 import com.ssafy.smartstoredb.util.CommonUtils
 
 
-class OrderDetailListAdapter(val context: Context, val orderDetail:List<OrderDetail>) :RecyclerView.Adapter<OrderDetailListAdapter.OrderDetailListHolder>(){
+class OrderDetailListAdapter(val context: Context, val orderDetail:List<OrderDetailResponse>) :RecyclerView.Adapter<OrderDetailListAdapter.OrderDetailListHolder>(){
 
     inner class OrderDetailListHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val menuImage = itemView.findViewById<ImageView>(R.id.menuImage)
@@ -21,11 +24,12 @@ class OrderDetailListAdapter(val context: Context, val orderDetail:List<OrderDet
         val textShoppingMenuCount = itemView.findViewById<TextView>(R.id.textShoppingMenuCount)
         val textShoppingMenuMoneyAll = itemView.findViewById<TextView>(R.id.textShoppingMenuMoneyAll)
 
-        fun bindInfo(data: OrderDetail){
+        fun bindInfo(data: OrderDetailResponse){
             var type = if(data.productType == "coffee") "잔" else "개"
 
-            var img = context.resources.getIdentifier(data.img, "drawable", context.packageName)
-            menuImage.setImageResource(img)
+            Glide.with(itemView)
+                .load("${ApplicationClass.MENU_IMGS_URL}${data.img}")
+                .into(menuImage)
 
             textShoppingMenuName.text = data.productName
             textShoppingMenuMoney.text = CommonUtils.makeComma(data.unitPrice)
