@@ -1,6 +1,7 @@
 package com.ssafy.smartstoredb.ui.main.home.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ssafy.smartstore.response.LatestOrderResponse
+import com.ssafy.smartstore.response.MenuDetailWithCommentResponse
 import com.ssafy.smartstoredb.R
 import com.ssafy.smartstoredb.config.ApplicationClass
 import com.ssafy.smartstoredb.util.CommonUtils
@@ -17,7 +19,7 @@ import java.util.*
 
 
 private const val TAG = "LatestOrderAdapter_싸피"
-class LatestOrderAdapter(val context: Context, val list: List<LatestOrderResponse>) :RecyclerView.Adapter<LatestOrderAdapter.LatestOrderHolder>(){
+class LatestOrderAdapter(val context: Context, var list: List<LatestOrderResponse>) :RecyclerView.Adapter<LatestOrderAdapter.LatestOrderHolder>(){
 
     var user = ApplicationClass.sharedPreferencesUtil.getUser()
 
@@ -29,7 +31,7 @@ class LatestOrderAdapter(val context: Context, val list: List<LatestOrderRespons
         val textMenuDate = itemView.findViewById<TextView>(R.id.textMenuDate)
         val textCompleted = itemView.findViewById<TextView>(R.id.textCompleted)
 
-        fun bindInfo(data: LatestOrderResponse){
+        fun bindInfo(data:LatestOrderResponse){
 //            Log.d(TAG, "bindInfo: ${data.img}")
 //            var img = context.resources.getIdentifier(data.img, "drawable", context.packageName)
 //            image.setImageResource(img)
@@ -85,5 +87,9 @@ class LatestOrderAdapter(val context: Context, val list: List<LatestOrderRespons
         this.itemClickListner = itemClickListener
     }
 
+    fun updateAdapter(mDataList: List<LatestOrderResponse>) {
+        this.list = mDataList;
+        notifyDataSetChanged();
+    }
 }
 

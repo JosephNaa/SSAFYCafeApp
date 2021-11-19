@@ -15,6 +15,7 @@ import com.google.gson.reflect.TypeToken
 import com.ssafy.smartstore.response.LatestOrderResponse
 import com.ssafy.smartstore.util.RetrofitCallback
 import com.ssafy.smartstoredb.config.ApplicationClass
+import com.ssafy.smartstoredb.data.service.OrderService
 import com.ssafy.smartstoredb.data.service.UserService
 import com.ssafy.smartstoredb.ui.main.home.adapter.LatestOrderAdapter
 import com.ssafy.smartstoredb.ui.main.home.adapter.NoticeAdapter
@@ -26,6 +27,7 @@ import com.ssafy.smartstoredb.ui.main.SP_NAME
 private const val TAG = "HomeFragment_싸피"
 class HomeFragment : Fragment(){
     lateinit var latestOrderAdapter : LatestOrderAdapter
+
     private var noticeAdapter: NoticeAdapter = NoticeAdapter()
     private lateinit var mainActivity: MainActivity
 
@@ -50,11 +52,17 @@ class HomeFragment : Fragment(){
         super.onViewCreated(view, savedInstanceState)
 
         var id = initUserName()
-        initData(id)
+//        initData(id)
+        initAdapter()
+
+        OrderService().getLastMonthOrder(id).observe(viewLifecycleOwner) {
+            latestOrderAdapter.updateAdapter(it)
+        }
     }
 
     fun initData(id: String) {
         UserService().getOrderList(id, LatestOrderListCallback())
+
     }
 
     inner class LatestOrderListCallback: RetrofitCallback<List<LatestOrderResponse>> {
@@ -92,8 +100,8 @@ class HomeFragment : Fragment(){
                 RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
 
-        latestOrderAdapter = LatestOrderAdapter(mainActivity, list)
 
+        latestOrderAdapter = LatestOrderAdapter(mainActivity, mutableListOf())
         //메인화면에서 최근 목록 클릭시 장바구니로 이동
         latestOrderAdapter.setItemClickListener(object : LatestOrderAdapter.ItemClickListener{
             override fun onClick(view: View, position: Int, orderId: Int) {

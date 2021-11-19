@@ -146,7 +146,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         val transaction = supportFragmentManager.beginTransaction()
         when(index){
             //장바구니
-            1 -> transaction.replace(R.id.frame_layout_main, ShoppingListFragment())
+            1 -> transaction.replace(R.id.frame_layout_main, ShoppingListFragment.newInstance(key, value))
                 .addToBackStack(null)
             //주문 상세 보기
             2 -> transaction.replace(R.id.frame_layout_main, OrderDetailFragment.newInstance(key, value))
