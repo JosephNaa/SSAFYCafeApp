@@ -16,7 +16,7 @@ import com.ssafy.smartstoredb.R
 import com.ssafy.smartstoredb.config.ApplicationClass
 import com.ssafy.smartstoredb.ui.main.order.adapter.CommentAdapter
 import com.ssafy.smartstoredb.databinding.FragmentMenuDetailBinding
-import com.ssafy.smartstoredb.model.Product
+import com.ssafy.smartstoredb.model.dto.Product
 import com.ssafy.smartstoredb.data.service.OrderService
 import com.ssafy.smartstoredb.data.service.ProductService
 import com.ssafy.smartstoredb.ui.main.MainActivity

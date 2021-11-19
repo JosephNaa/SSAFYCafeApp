@@ -1,4 +1,4 @@
-package com.ssafy.smartstoredb.model
+package com.ssafy.smartstoredb.model.dto
 
 data class UserOrderDetail (
     val orderId : Int, // 주문번호

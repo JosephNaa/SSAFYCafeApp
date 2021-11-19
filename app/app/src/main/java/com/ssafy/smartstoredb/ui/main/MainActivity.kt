@@ -11,12 +11,9 @@ import com.ssafy.smartstoredb.config.ApplicationClass
 import com.ssafy.smartstoredb.databinding.ActivityMainBinding
 import com.ssafy.smartstoredb.ui.base.BaseActivity
 import com.ssafy.smartstoredb.ui.login.LoginActivity
-import com.ssafy.smartstoredb.ui.main.fragment.*
 import com.ssafy.smartstoredb.ui.main.home.fragment.HomeFragment
 import com.ssafy.smartstoredb.ui.main.mypage.fragment.MypageFragment
-import com.ssafy.smartstoredb.ui.main.order.fragment.OrderDetailFragment
-import com.ssafy.smartstoredb.ui.main.order.fragment.OrderFragment
-import com.ssafy.smartstoredb.ui.main.order.fragment.ShoppingListFragment
+import com.ssafy.smartstoredb.ui.main.order.fragment.*
 
 private const val TAG = "MainActivity_싸피"
 val SP_NAME = "fcm_message"

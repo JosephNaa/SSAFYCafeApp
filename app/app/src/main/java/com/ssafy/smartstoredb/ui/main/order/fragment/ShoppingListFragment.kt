@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.smartstoredb.R
 import com.ssafy.smartstoredb.config.ApplicationClass
 import com.ssafy.smartstoredb.ui.main.order.adapter.ShoppingListAdapter
-import com.ssafy.smartstoredb.model.OrderDetail
+import com.ssafy.smartstoredb.model.dto.OrderDetail
 import com.ssafy.smartstoredb.data.service.OrderService
 import com.ssafy.smartstoredb.ui.main.MainActivity
 

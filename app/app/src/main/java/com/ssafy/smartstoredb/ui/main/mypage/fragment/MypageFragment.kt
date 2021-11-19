@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.smartstoredb.config.ApplicationClass
 import com.ssafy.smartstoredb.databinding.FragmentMypageBinding
-import com.ssafy.smartstoredb.model.UserOrderDetail
+import com.ssafy.smartstoredb.model.dto.UserOrderDetail
 import com.ssafy.smartstoredb.data.service.UserService
 import com.ssafy.smartstoredb.ui.main.MainActivity
 import com.ssafy.smartstoredb.ui.main.order.adapter.OrderAdapter

@@ -1,4 +1,4 @@
-package com.ssafy.smartstoredb.model
+package com.ssafy.smartstoredb.model.dto
 
 import java.util.*
 

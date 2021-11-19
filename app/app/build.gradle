@@ -52,6 +52,9 @@ dependencies {
     //bottom nav
     implementation 'com.google.android.material:material:1.2.0'
 
+    //indicator
+    implementation 'me.relex:circleindicator:2.1.6'
+
     // RecyclerView
     implementation "androidx.recyclerview:recyclerview:1.2.1"
 
@@ -71,4 +74,18 @@ dependencies {
 
     // Ted Permission
     implementation "gun0912.ted:tedpermission:2.2.3"
+
+    // Beacon 사용위한 Dependency 추가
+    // https://mvnrepository.com/artifact/org.altbeacon/android-beacon-library
+    implementation group: 'org.altbeacon', name: 'android-beacon-library', version: '2.18'
+
+    // Retrofit을 사용하기 위한 Dependency 추가
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+
+    // gson이용
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    // Glide 사용
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 }

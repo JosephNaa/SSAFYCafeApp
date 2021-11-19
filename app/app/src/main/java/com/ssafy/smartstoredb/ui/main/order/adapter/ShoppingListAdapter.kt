@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.smartstoredb.R
-import com.ssafy.smartstoredb.model.OrderDetail
+import com.ssafy.smartstoredb.model.dto.OrderDetail
 import com.ssafy.smartstoredb.util.CommonUtils
 
 

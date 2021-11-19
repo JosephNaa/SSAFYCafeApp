@@ -9,7 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.smartstoredb.R
-import com.ssafy.smartstoredb.model.Comment
+import com.ssafy.smartstoredb.model.dto.Comment
 import com.ssafy.smartstoredb.data.service.ProductService
 
 
