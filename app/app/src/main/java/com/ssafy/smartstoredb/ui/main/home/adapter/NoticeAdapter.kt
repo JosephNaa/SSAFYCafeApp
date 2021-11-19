@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.gson.Gson
-import com.ssafy.smartstoredb.MyFirebaseMessagingService
+import com.ssafy.smartstoredb.data.service.MyFirebaseMessagingService
 import com.ssafy.smartstoredb.databinding.ListItemNoticeBinding
 import com.ssafy.smartstoredb.ui.main.SP_NAME
 
