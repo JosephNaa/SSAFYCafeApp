@@ -12,7 +12,6 @@ data class OrderDetail (
     var productType:String = ""
 
     constructor(productId: Int, quantity: Int) :this(0, 0, productId, quantity)
-    constructor(orderId: Int,productId: Int,quantity: Int):this(0,orderId, productId, quantity)
     constructor():this(0,0)
 
 }

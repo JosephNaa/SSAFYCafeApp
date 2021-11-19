@@ -10,7 +10,7 @@
         android:background="@color/coffee_menu_back"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:scaleType="centerInside"
+        android:scaleType="fitCenter"
         android:src="@drawable/coffee1" />
     <LinearLayout
         android:layout_width="match_parent"
@@ -95,7 +95,7 @@
             style="@style/Text.Title"/>
 
         <TextView
-            android:id="@+id/ratingtext"
+            android:id="@+id/txtRating"
             style="@style/Text.light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -104,7 +104,7 @@
             android:textSize="30dp" />
 
         <RatingBar
-            android:id="@+id/ratingbar"
+            android:id="@+id/ratingBar"
             style="@style/Widget.AppCompat.RatingBar.Indicator"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -115,14 +115,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="5dp">
-
         <EditText
-            android:id="@+id/makecomment_text"
-            style="@style/Text.Title"
+            android:id="@+id/comment"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="@drawable/button_non_color" />
+            android:background="@drawable/button_non_color"
+            style="@style/Text.Title"/>
         <Button
             android:id="@+id/btnCreateComment"
             android:layout_width="wrap_content"

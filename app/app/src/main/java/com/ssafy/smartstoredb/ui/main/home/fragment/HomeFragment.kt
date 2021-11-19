@@ -2,6 +2,7 @@ package com.ssafy.smartstoredb.ui.main.home.fragment
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.ssafy.smartstore.response.LatestOrderResponse
+import com.ssafy.smartstore.util.RetrofitCallback
 import com.ssafy.smartstoredb.config.ApplicationClass
+import com.ssafy.smartstoredb.data.service.UserService
 import com.ssafy.smartstoredb.ui.main.home.adapter.LatestOrderAdapter
 import com.ssafy.smartstoredb.ui.main.home.adapter.NoticeAdapter
 import com.ssafy.smartstoredb.databinding.FragmentHomeBinding
@@ -19,10 +23,13 @@ import com.ssafy.smartstoredb.ui.main.MainActivity
 import com.ssafy.smartstoredb.ui.main.SP_NAME
 
 // Home 탭
+private const val TAG = "HomeFragment_싸피"
 class HomeFragment : Fragment(){
-    private var latestOrderAdapter : LatestOrderAdapter = LatestOrderAdapter()
+    lateinit var latestOrderAdapter : LatestOrderAdapter
     private var noticeAdapter: NoticeAdapter = NoticeAdapter()
     private lateinit var mainActivity: MainActivity
+
+    private lateinit var list: List<LatestOrderResponse>
 
     private lateinit var binding:FragmentHomeBinding
     override fun onAttach(context: Context) {
@@ -42,8 +49,35 @@ class HomeFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initUserName()
-        initAdapter()
+        var id = initUserName()
+        initData(id)
+    }
+
+    fun initData(id: String) {
+        UserService().getOrderList(id, LatestOrderListCallback())
+    }
+
+    inner class LatestOrderListCallback: RetrofitCallback<List<LatestOrderResponse>> {
+
+
+        override fun onSuccess(code: Int, responseData: List<LatestOrderResponse>) {
+            if(responseData.isNotEmpty()) {
+
+                Log.d(TAG, "onSuccess: ${responseData}")
+
+                list = responseData
+                initAdapter()
+            }
+        }
+
+        override fun onFailure(code: Int) {
+            Log.d(TAG, "onResponse: Error Code $code")
+        }
+
+        override fun onError(t: Throwable) {
+            Log.d(TAG, t.message ?: "통신오류")
+        }
+
     }
 
     fun initAdapter() {
@@ -58,12 +92,13 @@ class HomeFragment : Fragment(){
                 RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
 
+        latestOrderAdapter = LatestOrderAdapter(mainActivity, list)
 
-        latestOrderAdapter = LatestOrderAdapter()
         //메인화면에서 최근 목록 클릭시 장바구니로 이동
         latestOrderAdapter.setItemClickListener(object : LatestOrderAdapter.ItemClickListener{
-            override fun onClick(view: View, position: Int) {
-                mainActivity!!.openFragment(1)
+            override fun onClick(view: View, position: Int, orderId: Int) {
+                Log.d(TAG, "onClick: $orderId")
+                mainActivity!!.openFragment(1, "orderId", orderId)
             }
         })
         binding.recyclerViewLatestOrder.apply {
@@ -75,9 +110,10 @@ class HomeFragment : Fragment(){
         }
     }
 
-    private fun initUserName(){
+    private fun initUserName(): String {
         var user = ApplicationClass.sharedPreferencesUtil.getUser()
-        binding.textUserName.text = user.name
+        binding.textUserName.text = "${user.name} 님"
+        return user.id
     }
 
     private fun readSharedPreference(key:String): ArrayList<String>{

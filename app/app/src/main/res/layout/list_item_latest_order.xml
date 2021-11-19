@@ -21,6 +21,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:backgroundTint="@color/coffee_menu_back">
         <ImageView
+            android:id="@+id/image"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

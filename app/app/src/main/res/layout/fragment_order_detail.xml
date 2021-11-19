@@ -16,6 +16,7 @@
         android:textColor="@color/coffee_point_red"
         style="@style/Text.Title"/>
     <TextView
+        android:id="@+id/tvOrderStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="주문완료"

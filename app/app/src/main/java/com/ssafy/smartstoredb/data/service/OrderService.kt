@@ -1,169 +1,115 @@
 package com.ssafy.smartstoredb.data.service
 
-import android.content.Context
-import androidx.core.content.contentValuesOf
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.ssafy.smartstore.response.LatestOrderResponse
+import com.ssafy.smartstore.response.OrderDetailResponse
+import com.ssafy.smartstore.util.RetrofitUtil
 import com.ssafy.smartstoredb.model.dto.Order
-import com.ssafy.smartstoredb.model.dto.OrderDetail
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 private const val TAG = "OrderService_싸피"
 
-class OrderService(context: Context) : AbstractService(context) {
-    val TABLE = "t_order"
-    val COLUMNS = arrayOf("o_id", "user_id", "order_table", "order_time", "completed")
+class OrderService {
+    // 주문 상세 내역 가져오는 API
+    fun getOrderDetails(orderId: Int): LiveData<List<OrderDetailResponse>> {
+        val responseLiveData: MutableLiveData<List<OrderDetailResponse>> = MutableLiveData()
+        val orderDetailRequest: Call<List<OrderDetailResponse>> = RetrofitUtil.orderService.getOrderDetail(orderId)
 
-    val TABLE_DETAIL = "t_order_detail"
-    val DETAIL_COLUMNS = arrayOf("d_id", "order_id", "product_id", "quantity")
-
-    fun findShoppingList():List<OrderDetail> {
-        var orderId = 0
-        getReadableDatabase().use { db ->
-            var sql =
-                """
-                    select max(o_id) from t_order
-                """.trimIndent()
-            db.rawQuery(sql, arrayOf()).use {
-                if (it.moveToFirst()) {
-                    orderId = it.getInt(0)
+        orderDetailRequest.enqueue(object : Callback<List<OrderDetailResponse>> {
+            override fun onResponse(call: Call<List<OrderDetailResponse>>, response: Response<List<OrderDetailResponse>>) {
+                val res = response.body()
+                if(response.code() == 200){
+                    if (res != null) {
+                        responseLiveData.value = res
+                    }
+                    Log.d(TAG, "onResponse: $res")
+                } else {
+                    Log.d(TAG, "onResponse: Error Code ${response.code()}")
                 }
             }
-        }
-        orderId++
-        var list = arrayListOf<OrderDetail>()
-        getReadableDatabase().use { db ->
-            db.query(
-                TABLE_DETAIL,
-                DETAIL_COLUMNS,
-                "order_id=?",
-                arrayOf(orderId.toString()),
-                null,
-                null,
-                null
-            ).use {
-                if (it.moveToFirst()) {
-                    do {
-                        var quantity = it.getInt(3)
-                        var productId = it.getInt(2)
-                        var detail = OrderDetail(
-                            it.getInt(0),
-                            it.getInt(1),
-                            productId,
-                            quantity
-                        )
 
-                        //단가, 이미지, 상품명 추가
-                        var product = ProductService(context).getProduct(productId)
-                        detail.unitPrice = product.price
-                        detail.img = product.img
-                        detail.productName = product.name
-                        detail.productType = product.type
+            override fun onFailure(call: Call<List<OrderDetailResponse>>, t: Throwable) {
+                Log.d(TAG, t.message ?: "주문 상세 내역 받아오는 중 통신오류")
+            }
+        })
 
-                       list.add(detail)
-                    } while (it.moveToNext())
+        return responseLiveData
+    }
+
+    // 최근 한달간 주문내역 가져오는 API
+    fun getLastMonthOrder(userId: String): LiveData<List<LatestOrderResponse>> {
+        val responseLiveData: MutableLiveData<List<LatestOrderResponse>> = MutableLiveData()
+        val latestOrderRequest: Call<List<LatestOrderResponse>> = RetrofitUtil.orderService.getLastMonthOrder(userId)
+
+        latestOrderRequest.enqueue(object : Callback<List<LatestOrderResponse>> {
+            override fun onResponse(call: Call<List<LatestOrderResponse>>, response: Response<List<LatestOrderResponse>>) {
+                val res = response.body()
+                if(response.code() == 200){
+                    if (res != null) {
+                        // 가공 필요 orderDate 를 기준으로 정렬, o_img 하나로 축약 필요
+                        //orderId를 기준으로 새로운 리스트 만들어서 넘기기
+                        responseLiveData.value = makeLatestOrderList(res)
+                    }
+                    Log.d(TAG, "onResponse: $res")
+                } else {
+                    Log.d(TAG, "onResponse: Error Code ${response.code()}")
                 }
             }
+
+            override fun onFailure(call: Call<List<LatestOrderResponse>>, t: Throwable) {
+                Log.d(TAG, t.message ?: "최근 주문 내역 받아오는 중 통신오류")
+            }
+        })
+
+        return responseLiveData
+    }
+
+    // 최근 주문 목록에서 총가격, 주문 개수 구하여 List로 반환한다.
+    // 반환되는 List의 경우 화면에서 보여주는 최근 주문 목록 List이다.
+    private fun makeLatestOrderList(latestOrderList: List<LatestOrderResponse>): List<LatestOrderResponse>{
+        val hm = HashMap<Int, LatestOrderResponse>()
+        latestOrderList.forEach { order ->
+            if(hm.containsKey(order.orderId)){
+                val tmp = hm[order.orderId]!!
+                tmp.orderCnt += order.orderCnt
+                tmp.totalPrice  += order.productPrice * order.orderCnt
+                hm[order.orderId] = tmp
+            } else {
+                order.totalPrice = order.productPrice * order.orderCnt
+                hm[order.orderId] = order
+            }
         }
+        val list = ArrayList<LatestOrderResponse>(hm.values)
+        list.sortWith { o1, o2 -> o2.orderDate.compareTo(o1.orderDate) }
         return list
-
     }
 
-
-    fun addShoppingList(productId: Int, quantity: Int): Long {
-        var orderId = 0
-        getReadableDatabase().use { db ->
-            var sql =
-                """
-                    select max(o_id) from t_order
-                """.trimIndent()
-            db.rawQuery(sql, arrayOf()).use {
-                if (it.moveToFirst()) {
-                    orderId = it.getInt(0)
+    // 주문 API
+    fun makeOrder(order: Order): Int{
+        val makeOrderRequest: Call<Int> = RetrofitUtil.orderService.makeOrder(order)
+        var result = 0
+        makeOrderRequest.enqueue(object : Callback<Int> {
+            override fun onResponse(call: Call<Int>, response: Response<Int>) {
+                val res = response.body()
+                if(response.code() == 200){
+                    if (res != null) {
+                        result = res
+                    }
+                    Log.d(TAG, "onResponse: $res")
+                } else {
+                    Log.d(TAG, "onResponse: Error Code ${response.code()}")
                 }
             }
-        }
-        orderId++
 
-        var newDetail = contentValuesOf(
-            "order_id" to orderId,
-            "product_id" to productId,
-            "quantity" to quantity
-        )
-        getWritableDatabase().use {
-            return it.insert(TABLE_DETAIL, null, newDetail)
-        }
-    }
-
-    fun getOrderWithDetails(orderId: Int): Order {
-        var order = Order()
-        getReadableDatabase().use { db ->
-            db.query(TABLE, COLUMNS, "o_id=?", arrayOf(orderId.toString()), null, null, null).use {
-                if (it.moveToNext()) {
-                    order = Order(
-                        it.getInt(0),
-                        it.getString(1),
-                        it.getString(2),
-                        it.getString(3),
-                        it.getString(4)
-                    )
-                }
+            override fun onFailure(call: Call<Int>, t: Throwable) {
+                Log.d(TAG, t.message ?: "주문 중 통신오류")
             }
-        }
-        getReadableDatabase().use { db ->
-            db.query(
-                TABLE_DETAIL,
-                DETAIL_COLUMNS,
-                "order_id=?",
-                arrayOf(orderId.toString()),
-                null,
-                null,
-                null
-            ).use {
-                if (it.moveToFirst()) {
-                    do {
-                        var quantity = it.getInt(3)
-                        var productId = it.getInt(2)
-                        var detail = OrderDetail(
-                            it.getInt(0),
-                            it.getInt(1),
-                            productId,
-                            quantity
-                        )
-
-                        //단가, 이미지, 상품명 추가
-                        var product = ProductService(context).getProduct(productId)
-                        detail.unitPrice = product.price
-                        detail.img = product.img
-                        detail.productName = product.name
-                        detail.productType = product.type
-
-                        //토탈합계 계산
-                        order.totalPrice += quantity * product.price
-                        order.totalQnanty += quantity
-                        //  대표상품 세팅
-                        if (order.topProductName == "") order.topProductName = detail.productName
-                        if (order.topImg == "") order.topImg = detail.img
-
-
-                        order.details.add(detail)
-
-                    } while (it.moveToNext())
-                }
-            }
-        }
-
-
-
-        return order
-    }
-
-    fun makeorder(userId:String, list:ArrayList<OrderDetail>, whereorder:String, completed:String): Long {
-        var newOrder = contentValuesOf(
-            "user_id" to userId,
-            "order_table" to whereorder,
-            "completed" to completed
-        )
-        getWritableDatabase().use {
-            return it.insert(TABLE, null, newOrder)
-        }
+        })
+        return result
     }
 
 }

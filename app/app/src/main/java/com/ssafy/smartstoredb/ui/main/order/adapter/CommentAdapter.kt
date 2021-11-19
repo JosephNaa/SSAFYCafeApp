@@ -1,118 +1,106 @@
 package com.ssafy.smartstoredb.ui.main.order.adapter
 
-import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.ssafy.smartstore.adapter.CommentListener
+import com.ssafy.smartstore.response.MenuDetailWithCommentResponse
 import com.ssafy.smartstoredb.R
+import com.ssafy.smartstoredb.config.ApplicationClass
 import com.ssafy.smartstoredb.model.dto.Comment
-import com.ssafy.smartstoredb.data.service.ProductService
+
+private const val TAG = "CommentAdapter_싸피"
+class CommentAdapter(var list:List<MenuDetailWithCommentResponse> ) :RecyclerView.Adapter<CommentAdapter.CommentHolder>(){
+
+    var user = ApplicationClass.sharedPreferencesUtil.getUser()
+
+    inner class CommentHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+
+        fun bindInfo(data :MenuDetailWithCommentResponse){
+            Log.d(TAG, "bindInfo: $data")
+            itemView.findViewById<TextView>(R.id.textNoticeContent).text = data.commentContent
+
+            var modifyAccept = itemView.findViewById<ImageView>(R.id.iv_modify_accept_comment)
+            var modifyCancel = itemView.findViewById<ImageView>(R.id.iv_modify_cancel_comment)
+            var modifyComment = itemView.findViewById<ImageView>(R.id.iv_modify_comment)
+            var deleteComment = itemView.findViewById<ImageView>(R.id.iv_delete_comment)
+            var commentContent = itemView.findViewById<EditText>(R.id.et_comment_content)
 
 
-class CommentAdapter(val context: Context, val productId: Int, val userid: String) :
-    RecyclerView.Adapter<CommentAdapter.CommentHolder>() {
-    var list: List<Comment> = ProductService(context).getProductWithComments(productId).comment
-
-    inner class CommentHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var editcomment = itemView.findViewById<TextView>(R.id.et_comment_content)
-        var textNoticeContent = itemView.findViewById<TextView>(R.id.textNoticeContent)
-        var modifyaccept = itemView.findViewById<ImageView>(R.id.iv_modify_accept_comment)
-        var modifycancle = itemView.findViewById<ImageView>(R.id.iv_modify_cancel_comment)
-        var modify = itemView.findViewById<ImageView>(R.id.iv_modify_comment)
-        var delete = itemView.findViewById<ImageView>(R.id.iv_delete_comment)
-        fun bindInfo(data: Comment) {
-            editcomment.visibility = View.GONE
-            textNoticeContent.text = data.comment
-            modifyaccept.visibility = View.GONE
-            modifycancle.visibility = View.GONE
-            if (data.userId == userid) {
-                modify.visibility = View.VISIBLE
-                delete.visibility = View.VISIBLE
+            if (user.id == data.userId) {
+                modifyAccept.visibility = View.VISIBLE
+                modifyCancel.visibility = View.VISIBLE
+                modifyComment.visibility = View.VISIBLE
+                deleteComment.visibility = View.VISIBLE
+                commentContent.visibility = View.GONE
             } else {
-                modify.visibility = View.GONE
-                delete.visibility = View.GONE
+                modifyAccept.visibility = View.GONE
+                modifyCancel.visibility = View.GONE
+                modifyComment.visibility = View.GONE
+                deleteComment.visibility = View.GONE
+                commentContent.visibility = View.GONE
             }
-            modify.setOnClickListener {
-                editcomment.visibility = View.VISIBLE
-                modifyaccept.visibility = View.VISIBLE
-                modifycancle.visibility = View.VISIBLE
-                modify.visibility = View.GONE
-                delete.visibility = View.GONE
+
+            modifyAccept.setOnClickListener {
+                data.commentContent = commentContent.text.toString()
+                commentContent.text = null
+                commentContent.visibility = View.GONE
+                itemClickListner.onClick(it, layoutPosition, data, 2)
+            }
+
+            modifyCancel.setOnClickListener {
+                commentContent.text = null
+                commentContent.visibility = View.GONE
 
             }
-            modifyaccept.setOnClickListener {
-                change(itemView)
-                editcomment.visibility = View.GONE
-                modifyaccept.visibility = View.GONE
-                modifycancle.visibility = View.GONE
-                modify.visibility = View.VISIBLE
-                delete.visibility = View.VISIBLE
+
+            modifyComment.setOnClickListener {
+                commentContent.visibility = View.VISIBLE
             }
-            modifycancle.setOnClickListener {
-                editcomment.visibility = View.GONE
-                modifyaccept.visibility = View.GONE
-                modifycancle.visibility = View.GONE
-                modify.visibility = View.VISIBLE
-                delete.visibility = View.VISIBLE
-            }
-            delete.setOnClickListener {
-                delete(itemView)
+
+            deleteComment.setOnClickListener {
+                itemClickListner.onClick(it, layoutPosition, data, 3)
             }
         }
     }
 
-    fun change(itemView: View) {
-        var editcomment = itemView.findViewById<TextView>(R.id.et_comment_content)
-        var textNoticeContent = itemView.findViewById<TextView>(R.id.textNoticeContent)
-        ProductService(context).modifycomment(
-            textNoticeContent.text.toString(),
-            editcomment.text.toString(),
-            userid
-        )
-        list = ProductService(context).getProductWithComments(productId).comment
-        notifyDataSetChanged()
-        Toast.makeText(context,"상품평이 수정되었습니다",Toast.LENGTH_SHORT).show()
-    }
-    fun noti(){
-        notifyDataSetChanged()
-    }
-    fun delete(itemView: View){
-        var textNoticeContent = itemView.findViewById<TextView>(R.id.textNoticeContent)
-        ProductService(context).deletecomment(
-            textNoticeContent.text.toString(),
-            userid
-        )
-        list = ProductService(context).getProductWithComments(productId).comment
-        notifyDataSetChanged()
-        Toast.makeText(context,"상품평이 삭제되었습니다",Toast.LENGTH_SHORT).show()
-    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.list_item_comment, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_comment, parent, false)
+        Log.d(TAG, "onCreateViewHolder: ")
         return CommentHolder(view)
     }
 
     override fun onBindViewHolder(holder: CommentHolder, position: Int) {
-        holder.apply {
-            bindInfo(list[position])
-            itemView.setOnClickListener {
-                onItemClickListener.onClick(itemView, position)
-            }
-        }
+        Log.d(TAG, "onBindViewHolder: ")
+        holder.bindInfo(list[position])
     }
 
     override fun getItemCount(): Int {
+        Log.d(TAG, "getItemCount: ${list.size} ")
         return list.size
     }
 
-    interface OnItemClickListener {
-        fun onClick(view: View, position: Int)
+    interface ItemClickListener {
+        fun onClick(view: View,  position: Int, comment:MenuDetailWithCommentResponse, flag: Int)
     }
 
-    lateinit var onItemClickListener: OnItemClickListener
+    //클릭리스너 선언
+    private lateinit var itemClickListner: CommentAdapter.ItemClickListener
+    //클릭리스너 등록 매소드
+    fun setItemClickListener(itemClickListener: CommentAdapter.ItemClickListener) {
+        Log.d(TAG, "setItemClickListener: ")
+        this.itemClickListner = itemClickListener
+    }
+
+    fun updateAdapter(mDataList: List<MenuDetailWithCommentResponse>) {
+        this.list = mDataList;
+        Log.d(TAG, "updateAdapter: ")
+        notifyDataSetChanged();
+    }
 }
 

@@ -8,12 +8,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.ssafy.smartstore.response.LatestOrderResponse
 import com.ssafy.smartstoredb.R
-import com.ssafy.smartstoredb.model.dto.UserOrderDetail
+import com.ssafy.smartstoredb.config.ApplicationClass
 import com.ssafy.smartstoredb.util.CommonUtils
 
 private const val TAG = "OrderAdapter_싸피"
-class OrderAdapter(val context: Context, val list:List<UserOrderDetail>) :RecyclerView.Adapter<OrderAdapter.OrderHolder>(){
+class OrderAdapter(val context: Context, val list:List<LatestOrderResponse>) :RecyclerView.Adapter<OrderAdapter.OrderHolder>(){
 
     inner class OrderHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val menuImage = itemView.findViewById<ImageView>(R.id.menuImage)
@@ -22,17 +24,22 @@ class OrderAdapter(val context: Context, val list:List<UserOrderDetail>) :Recycl
         val textMenuDate = itemView.findViewById<TextView>(R.id.textMenuDate)
         val textCompleted = itemView.findViewById<TextView>(R.id.textCompleted)
 
-        fun bindInfo(data: UserOrderDetail){
-            var img = context.resources.getIdentifier(data.img, "drawable", context.packageName)
-            menuImage.setImageResource(img)
-            if(data.sumQuantity > 1){
-                textMenuNames.text = "${data.productName} 외 ${data.sumQuantity -1}건"  //외 x건
+        fun bindInfo(data: LatestOrderResponse){
+            Log.d(TAG, "bindInfo: ${data}")
+
+            Glide.with(itemView)
+                .load("${ApplicationClass.MENU_IMGS_URL}${data.img}")
+                .into(menuImage)
+
+            if(data.orderCnt > 1){
+                textMenuNames.text = "${data.productName} 외 ${data.orderCnt -1}건"  //외 x건
             }else{
                 textMenuNames.text = data.productName
             }
-            textMenuPrice.text = CommonUtils.makeComma(data.sumPrice)
-            textMenuDate.text = data.orderDate
-            textCompleted.text = "픽업완료" // or 준비중
+
+            textMenuPrice.text = CommonUtils.makeComma(data.totalPrice)
+            textMenuDate.text = CommonUtils.getFormattedString(data.orderDate)
+            textCompleted.text = CommonUtils.isOrderCompleted(data)
             //클릭연결
             itemView.setOnClickListener{
                 Log.d(TAG, "bindInfo: ${data.orderId}")

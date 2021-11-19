@@ -7,11 +7,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.ssafy.smartstoredb.R
+import com.ssafy.smartstoredb.config.ApplicationClass
 import com.ssafy.smartstoredb.model.dto.Product
 
 private const val TAG = "MenuAdapter_싸피"
-class MenuAdapter(val context: Context, val prodList:List<Product>) :RecyclerView.Adapter<MenuAdapter.MenuHolder>(){
+class MenuAdapter(var productList:List<Product>) :RecyclerView.Adapter<MenuAdapter.MenuHolder>(){
 
     inner class MenuHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val menuName = itemView.findViewById<TextView>(R.id.textMenuNames)
@@ -19,11 +21,12 @@ class MenuAdapter(val context: Context, val prodList:List<Product>) :RecyclerVie
 
         fun bindInfo(product : Product){
             menuName.text = product.name
-            var img = context.resources.getIdentifier(product.img, "drawable", context.packageName)
-            menuImage.setImageResource(img)
+            Glide.with(itemView)
+                .load("${ApplicationClass.MENU_IMGS_URL}${product.img}")
+                .into(menuImage)
 
             itemView.setOnClickListener{
-                itemClickListner.onClick(it, position, prodList[position].id)
+                itemClickListner.onClick(it, layoutPosition, productList[layoutPosition].id)
             }
         }
     }
@@ -35,12 +38,12 @@ class MenuAdapter(val context: Context, val prodList:List<Product>) :RecyclerVie
 
     override fun onBindViewHolder(holder: MenuHolder, position: Int) {
         holder.apply{
-            bindInfo(prodList[position])
+            bindInfo(productList[position])
         }
     }
 
     override fun getItemCount(): Int {
-        return prodList.size
+        return productList.size
     }
 
     //클릭 인터페이스 정의 사용하는 곳에서 만들어준다.
