@@ -13,6 +13,8 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.ssafy.smartstoredb.R
 import com.ssafy.smartstoredb.ui.main.MainActivity
 import java.util.*
@@ -30,10 +32,10 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
 
         // 메시지 유형이 데이터 메시지일 경우
         // Check if message contains a data payload.
-        var fcmBody: String = ""
+        var fcmData: String = ""
         if (remoteMessage.data.isNotEmpty()) {
             Log.d(TAG, "Message data payload: ${remoteMessage.data}")
-            fcmBody = remoteMessage.data.get("Body").toString()
+            fcmData = remoteMessage.data.get("data").toString()
         }
 
         // 메시지 유형이 알림 메시지일 경우
@@ -45,6 +47,9 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
                 "title" to it.title.toString(),
                 "body" to it.body.toString()
             )
+            fcmList = readSharedPreference("fcm")
+            fcmList.add(it.body.toString())
+            writeSharedPreference("fcm", fcmList)
             sendNotification(notificationInfo)
         }
     }
@@ -108,7 +113,28 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
     }
 
+    // SP 저장
+    private fun writeSharedPreference(key:String, value:ArrayList<String>){
+        val sp = getSharedPreferences(SP_NAME, MODE_PRIVATE)
+        val editor = sp.edit()
+        val gson = Gson()
+        val json: String = gson.toJson(value)
+        editor.putString(key, json)
+        editor.apply()
+    }
+
+    // SP 읽기
+    private fun readSharedPreference(key:String): ArrayList<String>{
+        val sp = getSharedPreferences(SP_NAME, MODE_PRIVATE)
+        val gson = Gson()
+        val json = sp.getString(key, "") ?: ""
+        val type = object : TypeToken<ArrayList<String>>() {}.type
+        val obj: ArrayList<String> = gson.fromJson(json, type) ?: ArrayList()
+        return obj
+    }
+
     companion object {
         private const val TAG = "MyFirebaseMsgService_싸피"
+        private const val SP_NAME = "fcm_message"
     }
 }
