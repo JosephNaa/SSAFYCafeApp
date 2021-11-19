@@ -43,6 +43,7 @@ class ShoppingListFragment : Fragment(){
     private lateinit var shoppingCount: TextView
     private lateinit var shoppingMoney: TextView
     private var isShop : Boolean = true
+
     private lateinit var viewModel : MainViewModel
     var distanceFromStore = 10.0
 
@@ -68,8 +69,10 @@ class ShoppingListFragment : Fragment(){
         mainActivity.hideBottomNav(true)
 
         arguments?.let {
+            Log.d(TAG, "onCreate: $it")
             orderId = it.getInt("orderId")
         }
+        Log.d(TAG, "onCreate: $orderId")
     }
 
     override fun onCreateView(
@@ -87,18 +90,41 @@ class ShoppingListFragment : Fragment(){
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(mainActivity).get(MainViewModel::class.java)
-        shoppingListAdapter = ShoppingListAdapter(viewModel.getShoppingCart())
+    fun initAdapter() {
+        Log.d(TAG, "initADapter: $list")
+        shoppingListAdapter = ShoppingListAdapter(list)
         shoppingListRecyclerView.apply {
             val linearLayoutManager = LinearLayoutManager(context)
             linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
             layoutManager = linearLayoutManager
+            shoppingListAdapter!!.list = list
             adapter = shoppingListAdapter
             //원래의 목록위치로 돌아오게함
             adapter!!.stateRestorationPolicy =
                 RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Log.d(TAG, "onViewCreated: ")
+        viewModel = ViewModelProvider(mainActivity).get(MainViewModel::class.java)
+
+        if (orderId == 0) {
+            list = viewModel.getShoppingCart()
+            initAdapter()
+        } else {
+            val orderDetails = OrderService().getOrderDetails(orderId)
+
+            orderDetails.observe(viewLifecycleOwner, {orderDetail  ->
+                for (order in orderDetail) {
+                    Log.d(TAG, "onViewCreated: ${order}")
+                    list.add(ShoppingCart(order.productId, order.img, order.productName, order.quantity, order.unitPrice, order.totalPrice, order.productType))
+                }
+
+                initAdapter()
+            })
+
         }
 
         btnShop.setOnClickListener {
@@ -194,6 +220,7 @@ class ShoppingListFragment : Fragment(){
         var user = ApplicationClass.sharedPreferencesUtil.getUser()
 
         for (shoppingCart in list) {
+            Log.d(TAG, "completedOrder: $shoppingCart")
             detail.add(OrderDetail(shoppingCart.menuId, shoppingCart.menuCnt))
         }
 
