@@ -19,6 +19,7 @@ import com.ssafy.smartstoredb.R
 import com.ssafy.smartstoredb.ui.main.MainActivity
 import java.util.*
 
+private const val TAG = "MyFirebaseMessagingServ_싸피"
 class MyFirebaseMessagingService: FirebaseMessagingService() {
 
     var fcmList = ArrayList<String>()
@@ -28,7 +29,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         // 앱이 foreground 상태에 있을 때 FCM 알림을 받았다면 onMessageReceived() 콜백 메소드가 호출됨으로써 FCM 알림이 대신된다.
-        Log.d("onMessageReceived 콜백 호출", "From: ${remoteMessage.from}")
+        Log.d(TAG, "From: ${remoteMessage.from}")
 
         // 메시지 유형이 데이터 메시지일 경우
         // Check if message contains a data payload.
@@ -72,6 +73,8 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
             // Get new FCM registration token
             val token = task.result
             Log.d("newFCMToken", token.toString())
+
+            MainActivity.uploadToken(token)
         })
     }
 

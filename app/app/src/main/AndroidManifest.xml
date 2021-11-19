@@ -66,8 +66,7 @@
             android:value="@string/api_key" />
 
         <!-- FCM service -->
-        <service android:name=".data.service.MyFirebaseMessagingService"
-            android:exported="false">
+        <service android:name=".data.service.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
