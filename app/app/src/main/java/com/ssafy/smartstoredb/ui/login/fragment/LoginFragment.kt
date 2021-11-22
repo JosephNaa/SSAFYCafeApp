@@ -36,8 +36,7 @@ import org.json.JSONObject
 import com.nhn.android.naverlogin.OAuthLogin.mOAuthLoginHandler
 
 import android.R.attr.name
-
-
+import android.widget.ImageButton
 
 
 // 로그인 화면
@@ -46,8 +45,8 @@ class LoginFragment : Fragment(){
     private lateinit var loginActivity: LoginActivity
     lateinit var btnLogin : Button
     lateinit var btnJoin : Button
-    lateinit var btnKakao : Button
-    lateinit var btnNaver : OAuthLoginButton
+    lateinit var btnKakao : ImageButton
+    lateinit var btnNaver : ImageButton
 
     private var checkedId = false
     var socialUser = User()
