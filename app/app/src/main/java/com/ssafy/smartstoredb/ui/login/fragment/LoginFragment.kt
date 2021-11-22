@@ -41,6 +41,7 @@ import android.widget.ImageButton
 private const val TAG = "LoginFragment_싸피"
 class LoginFragment : Fragment(){
     private lateinit var loginActivity: LoginActivity
+    private var loginType: String? = null
     lateinit var btnLogin : Button
     lateinit var btnJoin : Button
     lateinit var btnKakao : ImageButton
@@ -127,6 +128,13 @@ class LoginFragment : Fragment(){
         mOAuthLoginInstance.init(mContext, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_CLIENT_NAME)
         btnNaver.setOAuthLoginHandler(mOAuthLoginHandler)
 
+        loginType = readSharedPreference()
+
+        if (loginType.equals("naver")) {
+            deleteSharedPreference()
+            naverLogout()
+        }
+
 //        btnNaver.setOnClickListener {
 //            RequestApiTask(mContext, mOAuthLoginInstance).execute()
 //        }
@@ -186,6 +194,10 @@ class LoginFragment : Fragment(){
                 e.printStackTrace()
             }
         }
+    }
+
+    fun naverLogout() {
+        mOAuthLoginInstance.logout(mContext)
     }
 
     // Login API Call
@@ -259,6 +271,20 @@ class LoginFragment : Fragment(){
         val sp = context?.getSharedPreferences("login_type", Context.MODE_PRIVATE)
         val editor = sp!!.edit()
         editor.putString("type", type)
+        editor.apply()
+    }
+
+    // SP 읽기
+    private fun readSharedPreference(): String{
+        val sp = context?.getSharedPreferences("login_type", Context.MODE_PRIVATE)
+        return sp?.getString("type", "") ?: ""
+    }
+
+    // SP 지우기
+    private fun deleteSharedPreference() {
+        val sp = context?.getSharedPreferences("login_type", Context.MODE_PRIVATE)
+        val editor = sp!!.edit()
+        editor.clear()
         editor.apply()
     }
 }
