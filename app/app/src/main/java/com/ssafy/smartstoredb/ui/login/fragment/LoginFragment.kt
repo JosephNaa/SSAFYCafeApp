@@ -6,16 +6,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethod
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.kakao.sdk.auth.LoginClient
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.user.UserApiClient
 import com.ssafy.smartstore.util.RetrofitCallback
 import com.ssafy.smartstoredb.R
 import com.ssafy.smartstoredb.config.ApplicationClass
+import com.ssafy.smartstoredb.data.remote.api.KakaoApi
 import com.ssafy.smartstoredb.ui.login.LoginActivity
 import com.ssafy.smartstoredb.data.service.UserService
 import com.ssafy.smartstoredb.model.dto.User
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 // 로그인 화면
 private const val TAG = "LoginFragment_싸피"
@@ -23,6 +31,10 @@ class LoginFragment : Fragment(){
     private lateinit var loginActivity: LoginActivity
     lateinit var btnLogin : Button
     lateinit var btnJoin : Button
+    lateinit var btnKakao : Button
+
+    private var checkedId = false
+    var kUser = User()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -42,6 +54,8 @@ class LoginFragment : Fragment(){
         super.onViewCreated(view, savedInstanceState)
         btnLogin = view.findViewById(R.id.btnLogin)
         btnJoin = view.findViewById(R.id.btnJoin)
+        btnKakao = view.findViewById(R.id.btnKakao)
+
         var id = view.findViewById<EditText>(R.id.editTextLoginID)
         var password = view.findViewById<EditText>(R.id.editTextLoginPW)
 
@@ -52,6 +66,42 @@ class LoginFragment : Fragment(){
         btnJoin.setOnClickListener {
             loginActivity.openFragment(2)
         }
+
+        btnKakao.setOnClickListener {
+            val callback: (OAuthToken?, Throwable?) -> Unit = {token, error ->
+                if (error != null) {
+                    Log.d(TAG, "onViewCreated: 로그인 실패, $error")
+                } else if (token != null) {
+                    Log.d(TAG, "onViewCreated: 로그인 성공 ${token}")
+
+                    UserApiClient.instance.me { user, error ->
+                        Log.d(TAG, "회원번호: ${user?.id}")
+                        Log.d(TAG, "닉네임: ${user?.kakaoAccount?.profile?.nickname}")
+
+                        kUser.id = "k"+user?.id.toString()
+                        kUser.name = user?.kakaoAccount?.profile?.nickname!!
+                        kUser.pass = "pass" + user?.id.toString()
+                        kUser.stamps = 0
+
+                        UserService().isAvailable(kUser.id, CheckIdCallback())
+
+                        ApplicationClass.sharedPreferencesUtil.addUser(kUser)
+                        loginActivity.openFragment(1)
+
+                    }
+
+
+                }
+            }
+
+            if (LoginClient.instance.isKakaoTalkLoginAvailable(requireContext())) {
+                LoginClient.instance.loginWithKakaoTalk(requireContext(), callback = callback)
+            } else {
+                LoginClient.instance.loginWithKakaoAccount(requireContext(), callback = callback)
+            }
+        }
+
+
     }
 
     // Login API Call
@@ -82,4 +132,41 @@ class LoginFragment : Fragment(){
         }
     }
 
+    inner class CheckIdCallback: RetrofitCallback<Boolean> {
+        override fun onSuccess( code: Int, id: Boolean) {
+
+            if (!id) {
+                checkedId = true
+                UserService().join(kUser, JoinCallback())
+
+            }else{
+            }
+        }
+
+        override fun onError(t: Throwable) {
+            Log.d(TAG, t.message ?: "아이디 중복 체크 통신오류")
+        }
+
+        override fun onFailure(code: Int) {
+            Log.d(TAG, "onResponse: Error Code $code")
+        }
+    }
+
+    inner class JoinCallback: RetrofitCallback<Boolean> {
+        override fun onSuccess( code: Int, check: Boolean) {
+
+            if (check) {
+                Toast.makeText(context, "회원가입되었습니다!", Toast.LENGTH_SHORT).show()
+                loginActivity.openFragment(3)
+            }
+        }
+
+        override fun onError(t: Throwable) {
+            Log.d(TAG, t.message ?: "회원가입 통신오류")
+        }
+
+        override fun onFailure(code: Int) {
+            Log.d(TAG, "onResponse: Error Code $code")
+        }
+    }
 }
