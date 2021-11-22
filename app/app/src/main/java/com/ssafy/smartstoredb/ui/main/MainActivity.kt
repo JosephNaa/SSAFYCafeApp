@@ -28,12 +28,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.messaging.FirebaseMessaging
 import com.ssafy.smartstore.dto.ShoppingCart
 import com.ssafy.smartstoredb.*
 import com.ssafy.smartstoredb.R
 import com.ssafy.smartstoredb.config.ApplicationClass
+import com.ssafy.smartstoredb.data.service.FirebaseTokenService
 import com.ssafy.smartstoredb.databinding.ActivityMainBinding
 import com.ssafy.smartstoredb.ui.base.BaseActivity
 import com.ssafy.smartstoredb.ui.login.LoginActivity
@@ -42,6 +44,9 @@ import com.ssafy.smartstoredb.ui.main.home.fragment.HomeFragment
 import com.ssafy.smartstoredb.ui.main.mypage.fragment.MypageFragment
 import com.ssafy.smartstoredb.ui.main.order.fragment.*
 import org.altbeacon.beacon.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 private const val TAG = "MainActivity_싸피"
 val SP_NAME = "fcm_message"
@@ -90,7 +95,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
 
         setBeacon()
 
-        createNotificationChannel("ssafy_channel", "ssafy")
+        createNotificationChannel(channel_id, "ssafy")
 
         checkPermissions()
 
@@ -189,9 +194,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
     }
 
     private fun initFirebase() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            Log.w(TAG, "initFirebase: {${task.result}}")
-        }
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener {
+                task ->
+
+            if (!task.isSuccessful) {
+                Log.w(TAG, "FCM 토큰 얻기에 실패하였습니다.", task.exception)
+                return@OnCompleteListener
+            }
+            // token log 남기기
+            Log.d(TAG, "token: ${task.result?:"task.result is null"}")
+            uploadToken(task.result!!)
+        })
+
     }
 
     private fun getNFCData(intent: Intent) {
@@ -427,5 +441,28 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         Log.d(TAG, "showDialog: ")
         val dialog = BeaconDialog()
         dialog.show(supportFragmentManager, "CustomDialog")
+    }
+
+    companion object{
+        // Notification Channel ID
+        const val channel_id = "ssafy_channel"
+        // ratrofit  수업 후 network 에 업로드 할 수 있도록 구성
+        fun uploadToken(token:String){
+            // 새로운 토큰 수신 시 서버로 전송
+            val storeService = ApplicationClass.retrofit.create(FirebaseTokenService::class.java)
+            storeService.uploadToken(token).enqueue(object : Callback<String> {
+                override fun onResponse(call: Call<String>, response: Response<String>) {
+                    if(response.isSuccessful){
+                        val res = response.body()
+                        Log.d(TAG, "onResponse: $res")
+                    } else {
+                        Log.d(TAG, "onResponse: Error Code ${response.code()}")
+                    }
+                }
+                override fun onFailure(call: Call<String>, t: Throwable) {
+                    Log.d(TAG, t.message ?: "토큰 정보 등록 중 통신오류")
+                }
+            })
+        }
     }
 }
