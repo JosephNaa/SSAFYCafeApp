@@ -42,6 +42,8 @@ class MypageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMypageBinding.inflate(inflater, container, false)
+        val loginType = readSharedPreference()
+        Toast.makeText(context, "" + loginType, Toast.LENGTH_SHORT).show()
         return binding.root
     }
 
@@ -146,5 +148,11 @@ class MypageFragment : Fragment() {
         binding.proBarUserLevel.max = max
         binding.proBarUserLevel.progress = max - to
         binding.textUserNextLevel.text = "${max - to}/$max"
+    }
+
+    // SP 읽기
+    private fun readSharedPreference(): String{
+        val sp = context?.getSharedPreferences("login_type", Context.MODE_PRIVATE)
+        return sp?.getString("type", "") ?: ""
     }
 }

@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethod
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -35,7 +34,6 @@ import org.json.JSONObject
 
 import com.nhn.android.naverlogin.OAuthLogin.mOAuthLoginHandler
 
-import android.R.attr.name
 import android.widget.ImageButton
 
 
@@ -95,6 +93,7 @@ class LoginFragment : Fragment(){
                     Log.d(TAG, "onViewCreated: 로그인 실패, $error")
                 } else if (token != null) {
                     Log.d(TAG, "onViewCreated: 로그인 성공 ${token}")
+                    writeSharedPreference("kakao")
 
                     UserApiClient.instance.me { user, error ->
                         Log.d(TAG, "회원번호: ${user?.id}")
@@ -142,6 +141,7 @@ class LoginFragment : Fragment(){
     private val mOAuthLoginHandler = @SuppressLint("HandlerLeak") object : OAuthLoginHandler() {
         override fun run(success: Boolean) {
             if (success) {
+                writeSharedPreference("naver")
                 RequestApiTask().execute()
             } else {
                 val errorCode = mOAuthLoginInstance.getLastErrorCode(mContext).code
@@ -252,5 +252,13 @@ class LoginFragment : Fragment(){
         override fun onFailure(code: Int) {
             Log.d(TAG, "onResponse: Error Code $code")
         }
+    }
+
+    // SP 저장
+    private fun writeSharedPreference(type: String){
+        val sp = context?.getSharedPreferences("login_type", Context.MODE_PRIVATE)
+        val editor = sp!!.edit()
+        editor.putString("type", type)
+        editor.apply()
     }
 }
