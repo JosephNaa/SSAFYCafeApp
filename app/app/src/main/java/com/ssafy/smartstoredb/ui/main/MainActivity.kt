@@ -184,6 +184,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         //preference 지우기
         ApplicationClass.sharedPreferencesUtil.deleteUser()
 
+        // login_type SP 지우기
+        val sp = this.getSharedPreferences("login_type", Context.MODE_PRIVATE)
+        val editor = sp.edit()
+        editor.clear()
+        editor.apply()
+
         //화면이동
         val intent = Intent(this, LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
