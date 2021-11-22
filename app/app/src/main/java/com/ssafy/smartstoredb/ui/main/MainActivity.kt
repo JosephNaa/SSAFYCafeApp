@@ -184,6 +184,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         //preference 지우기
         ApplicationClass.sharedPreferencesUtil.deleteUser()
 
+
         //화면이동
         val intent = Intent(this, LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
