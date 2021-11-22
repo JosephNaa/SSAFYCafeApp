@@ -4,8 +4,11 @@ import android.Manifest
 import android.app.Application
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
+import com.kakao.sdk.auth.LoginClient.Companion.instance
+import com.kakao.sdk.common.KakaoSdk
 import com.ssafy.smartstore.intercepter.AddCookiesInterceptor
 import com.ssafy.smartstore.intercepter.ReceivedCookiesInterceptor
+import com.ssafy.smartstoredb.R
 import com.ssafy.smartstoredb.data.db.DBHelper
 import com.ssafy.smartstoredb.util.SharedPreferencesUtil
 import okhttp3.OkHttpClient
@@ -53,6 +56,8 @@ class ApplicationClass : Application() {
             .client(okHttpClient)
             .build()
 
+        KakaoSdk.init(this, getString(R.string.kakao_app_key))
     }
 
-}
+
+    }

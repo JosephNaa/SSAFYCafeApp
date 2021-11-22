@@ -31,6 +31,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.messaging.FirebaseMessaging
+import com.kakao.sdk.common.util.Utility
 import com.ssafy.smartstore.dto.ShoppingCart
 import com.ssafy.smartstoredb.*
 import com.ssafy.smartstoredb.R
@@ -84,6 +85,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        
+        var keyHash = Utility.getKeyHash(this)
+        Log.d(TAG, "onCreate: $keyHash")
 
         initFirebase()
 

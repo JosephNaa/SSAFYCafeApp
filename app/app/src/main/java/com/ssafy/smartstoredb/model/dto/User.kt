@@ -1,10 +1,10 @@
 package com.ssafy.smartstoredb.model.dto
 
 data class User (
-    val id: String,
-    val name: String,
-    val pass: String,
-    val stamps: Int,
+    var id: String,
+    var name: String,
+    var pass: String,
+    var stamps: Int,
     val stampList: ArrayList<Stamp> = ArrayList()
 ){
     constructor():this("", "","",0)
