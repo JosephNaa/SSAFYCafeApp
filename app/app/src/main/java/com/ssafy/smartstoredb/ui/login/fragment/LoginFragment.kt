@@ -46,7 +46,7 @@ class LoginFragment : Fragment(){
     lateinit var btnLogin : Button
     lateinit var btnJoin : Button
     lateinit var btnKakao : ImageButton
-    lateinit var btnNaver : ImageButton
+    lateinit var btnNaver : OAuthLoginButton
 
     private var checkedId = false
     var socialUser = User()
@@ -126,20 +126,39 @@ class LoginFragment : Fragment(){
         mContext = requireContext()
         mOAuthLoginInstance = OAuthLogin.getInstance()
         mOAuthLoginInstance.init(mContext, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_CLIENT_NAME)
+        btnNaver.setOAuthLoginHandler(mOAuthLoginHandler)
 
-        btnNaver.setOnClickListener {
-            RequestApiTask(mContext, mOAuthLoginInstance).execute()
-        }
+//        btnNaver.setOnClickListener {
+//            RequestApiTask(mContext, mOAuthLoginInstance).execute()
+//        }
     }
 
-    inner class RequestApiTask(private val mContext: Context, private val mOAuthLoginModule: OAuthLogin) :
-        AsyncTask<Void?, Void?, String>() {
+    fun initNaverData() {
+
+
+//        btnNaver.setOAuthLoginHandler(mOAuthLoginHandler)
+    }
+
+    private val mOAuthLoginHandler = @SuppressLint("HandlerLeak") object : OAuthLoginHandler() {
+        override fun run(success: Boolean) {
+            if (success) {
+                RequestApiTask().execute()
+            } else {
+                val errorCode = mOAuthLoginInstance.getLastErrorCode(mContext).code
+                val errorDesc = mOAuthLoginInstance.getLastErrorDesc(mContext)
+                Log.d(TAG, "errorCode: $errorCode errorDesc: $errorDesc")
+            }
+        }
+
+    }
+
+    inner class RequestApiTask() : AsyncTask<Void?, Void?, String>() {
         override fun onPreExecute() {}
 
         override fun doInBackground(vararg params: Void?): String? {
             val url = "https://openapi.naver.com/v1/nid/me"
-            val at = mOAuthLoginModule.getAccessToken(mContext)
-            return mOAuthLoginModule.requestApi(mContext, at, url)
+            val at = mOAuthLoginInstance.getAccessToken(mContext)
+            return mOAuthLoginInstance.requestApi(mContext, at, url)
         }
 
         override fun onPostExecute(content: String) {
@@ -221,7 +240,7 @@ class LoginFragment : Fragment(){
         override fun onSuccess( code: Int, check: Boolean) {
 
             if (check) {
-                Toast.makeText(mContext, "회원가입되었습니다!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "회원가입되었습니다!", Toast.LENGTH_SHORT).show()
                 loginActivity.openFragment(3)
             }
         }
