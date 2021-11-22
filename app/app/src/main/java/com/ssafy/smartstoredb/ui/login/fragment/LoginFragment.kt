@@ -1,6 +1,8 @@
 package com.ssafy.smartstoredb.ui.login.fragment
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,16 +16,29 @@ import androidx.fragment.app.Fragment
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
+import com.nhn.android.naverlogin.OAuthLogin
+import com.nhn.android.naverlogin.OAuthLogin.mOAuthLoginHandler
+import com.nhn.android.naverlogin.OAuthLoginHandler
+import com.nhn.android.naverlogin.ui.view.OAuthLoginButton
 import com.ssafy.smartstore.util.RetrofitCallback
 import com.ssafy.smartstoredb.R
 import com.ssafy.smartstoredb.config.ApplicationClass
-import com.ssafy.smartstoredb.data.remote.api.KakaoApi
 import com.ssafy.smartstoredb.ui.login.LoginActivity
 import com.ssafy.smartstoredb.data.service.UserService
 import com.ssafy.smartstoredb.model.dto.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONException
+
+import org.json.JSONObject
+
+import com.nhn.android.naverlogin.OAuthLogin.mOAuthLoginHandler
+
+import android.R.attr.name
+
+
+
 
 // 로그인 화면
 private const val TAG = "LoginFragment_싸피"
@@ -32,9 +47,16 @@ class LoginFragment : Fragment(){
     lateinit var btnLogin : Button
     lateinit var btnJoin : Button
     lateinit var btnKakao : Button
+    lateinit var btnNaver : OAuthLoginButton
 
     private var checkedId = false
-    var kUser = User()
+    var socialUser = User()
+
+    lateinit var mOAuthLoginInstance : OAuthLogin
+    lateinit var mContext: Context
+    val OAUTH_CLIENT_ID = "szowXGoW6mjaBusX181m"
+    val OAUTH_CLIENT_SECRET = "idi_iJ2_Oi"
+    val OAUTH_CLIENT_NAME = "ssafy_cafe_final"
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -55,6 +77,7 @@ class LoginFragment : Fragment(){
         btnLogin = view.findViewById(R.id.btnLogin)
         btnJoin = view.findViewById(R.id.btnJoin)
         btnKakao = view.findViewById(R.id.btnKakao)
+        btnNaver = view.findViewById(R.id.btnNaver)
 
         var id = view.findViewById<EditText>(R.id.editTextLoginID)
         var password = view.findViewById<EditText>(R.id.editTextLoginPW)
@@ -78,14 +101,14 @@ class LoginFragment : Fragment(){
                         Log.d(TAG, "회원번호: ${user?.id}")
                         Log.d(TAG, "닉네임: ${user?.kakaoAccount?.profile?.nickname}")
 
-                        kUser.id = "k"+user?.id.toString()
-                        kUser.name = user?.kakaoAccount?.profile?.nickname!!
-                        kUser.pass = "pass" + user?.id.toString()
-                        kUser.stamps = 0
+                        socialUser.id = "k"+user?.id.toString()
+                        socialUser.name = user?.kakaoAccount?.profile?.nickname!!
+                        socialUser.pass = "pass" + user?.id.toString()
+                        socialUser.stamps = 0
 
-                        UserService().isAvailable(kUser.id, CheckIdCallback())
+                        UserService().isAvailable(socialUser.id, CheckIdCallback())
 
-                        ApplicationClass.sharedPreferencesUtil.addUser(kUser)
+                        ApplicationClass.sharedPreferencesUtil.addUser(socialUser)
                         loginActivity.openFragment(1)
 
                     }
@@ -101,7 +124,50 @@ class LoginFragment : Fragment(){
             }
         }
 
+        mContext = requireContext()
+        mOAuthLoginInstance = OAuthLogin.getInstance()
+        mOAuthLoginInstance.init(mContext, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_CLIENT_NAME)
 
+        btnNaver.setOnClickListener {
+            RequestApiTask(mContext, mOAuthLoginInstance).execute()
+        }
+    }
+
+    inner class RequestApiTask(private val mContext: Context, private val mOAuthLoginModule: OAuthLogin) :
+        AsyncTask<Void?, Void?, String>() {
+        override fun onPreExecute() {}
+
+        override fun doInBackground(vararg params: Void?): String? {
+            val url = "https://openapi.naver.com/v1/nid/me"
+            val at = mOAuthLoginModule.getAccessToken(mContext)
+            return mOAuthLoginModule.requestApi(mContext, at, url)
+        }
+
+        override fun onPostExecute(content: String) {
+            try {
+                val loginResult = JSONObject(content)
+                if (loginResult.getString("resultcode") == "00") {
+                    val response = loginResult.getJSONObject("response")
+                    val email = response.getString("email")
+                    val name = response.getString("name")
+
+//                    Toast.makeText(mContext, "id : $id email : $email", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(mContext, "res : $response", Toast.LENGTH_SHORT).show()
+
+                    socialUser.id = "n" + email
+                    socialUser.name = name
+                    socialUser.pass = "pass" + email
+                    socialUser.stamps = 0
+
+                    UserService().isAvailable(socialUser.id, CheckIdCallback())
+
+                    ApplicationClass.sharedPreferencesUtil.addUser(socialUser)
+                    loginActivity.openFragment(1)
+                }
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+        }
     }
 
     // Login API Call
@@ -137,7 +203,7 @@ class LoginFragment : Fragment(){
 
             if (!id) {
                 checkedId = true
-                UserService().join(kUser, JoinCallback())
+                UserService().join(socialUser, JoinCallback())
 
             }else{
             }
@@ -156,7 +222,7 @@ class LoginFragment : Fragment(){
         override fun onSuccess( code: Int, check: Boolean) {
 
             if (check) {
-                Toast.makeText(context, "회원가입되었습니다!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(mContext, "회원가입되었습니다!", Toast.LENGTH_SHORT).show()
                 loginActivity.openFragment(3)
             }
         }
