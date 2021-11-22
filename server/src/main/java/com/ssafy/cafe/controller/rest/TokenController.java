@@ -15,6 +15,7 @@ import com.ssafy.cafe.model.service.FirebaseCloudMessageService;
 @CrossOrigin("*")
 public class TokenController {
 	
+	
 	private static final Logger logger = LoggerFactory.getLogger(TokenController.class);
 
     @Autowired

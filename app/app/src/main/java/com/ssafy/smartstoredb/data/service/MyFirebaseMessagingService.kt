@@ -19,7 +19,6 @@ import com.ssafy.smartstoredb.R
 import com.ssafy.smartstoredb.ui.main.MainActivity
 import java.util.*
 
-private const val TAG = "MyFirebaseMessagingServ_싸피"
 class MyFirebaseMessagingService: FirebaseMessagingService() {
 
     var fcmList = ArrayList<String>()

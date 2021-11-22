@@ -26,7 +26,7 @@ class OrderService {
                     if (res != null) {
                         responseLiveData.value = res
                     }
-                    Log.d(TAG, "onResponse: $res")
+//                    Log.d(TAG, "onResponse: $res")
                 } else {
                     Log.d(TAG, "onResponse: Error Code ${response.code()}")
                 }
@@ -54,7 +54,7 @@ class OrderService {
                         //orderId를 기준으로 새로운 리스트 만들어서 넘기기
                         responseLiveData.value = makeLatestOrderList(res)
                     }
-                    Log.d(TAG, "onResponse: $res")
+//                    Log.d(TAG, "onResponse: $res")
                 } else {
                     Log.d(TAG, "onResponse: Error Code ${response.code()}")
                 }
@@ -99,7 +99,7 @@ class OrderService {
                     if (res != null) {
                         result = res
                     }
-                    Log.d(TAG, "onResponse: $res")
+//                    Log.d(TAG, "onResponse: $res")
                 } else {
                     Log.d(TAG, "onResponse: Error Code ${response.code()}")
                 }

@@ -28,6 +28,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.messaging.FirebaseMessaging
 import com.ssafy.smartstore.dto.ShoppingCart
@@ -193,9 +194,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
     }
 
     private fun initFirebase() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            Log.w(TAG, "initFirebase: {${task.result}}")
-        }
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener {
+                task ->
+
+            if (!task.isSuccessful) {
+                Log.w(TAG, "FCM 토큰 얻기에 실패하였습니다.", task.exception)
+                return@OnCompleteListener
+            }
+            // token log 남기기
+            Log.d(TAG, "token: ${task.result?:"task.result is null"}")
+            uploadToken(task.result!!)
+        })
+
     }
 
     private fun getNFCData(intent: Intent) {
