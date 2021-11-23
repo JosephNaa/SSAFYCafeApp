@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- NFC 사용을 위한 허용 -->
     <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
 
     <uses-feature
         android:name="android.hardware.nfc"
