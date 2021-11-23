@@ -1,5 +1,6 @@
 package com.ssafy.smartstoredb.data.service
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -9,6 +10,7 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -99,9 +101,10 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-            PendingIntent.FLAG_ONE_SHOT)
+            PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val channelId = getString(R.string.default_notification_channel_id)
+//        val channelId = getString(R.string.default_notification_channel_id)
+        val channelId = "sssss"
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
         // icon, color는 메타 데이터에서 설정한 것으로 설정해주면 된다.
@@ -112,6 +115,9 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
             .setAutoCancel(true)
             .setSound(defaultSoundUri)
             .setContentIntent(pendingIntent)
+            .setDefaults(Notification.DEFAULT_ALL)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setFullScreenIntent(pendingIntent, true)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -119,7 +125,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(channelId,
                 "Channel human readable title",
-                NotificationManager.IMPORTANCE_DEFAULT)
+                NotificationManager.IMPORTANCE_HIGH)
             notificationManager.createNotificationChannel(channel)
         }
 
