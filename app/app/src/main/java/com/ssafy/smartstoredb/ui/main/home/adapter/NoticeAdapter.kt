@@ -53,5 +53,10 @@ class NoticeAdapter :RecyclerView.Adapter<NoticeAdapter.NoticeHolder>(){
     override fun getItemCount(): Int {
         return noticeData.size
     }
+
+    fun update(newList: ArrayList<String>) {
+        this.noticeData = newList
+        notifyDataSetChanged()
+    }
 }
 
