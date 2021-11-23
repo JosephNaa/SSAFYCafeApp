@@ -2,6 +2,7 @@ package com.ssafy.smartstoredb.ui.login.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
@@ -35,6 +36,14 @@ import org.json.JSONObject
 import com.nhn.android.naverlogin.OAuthLogin.mOAuthLoginHandler
 
 import android.widget.ImageButton
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInApi
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.SignInButton
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 
 
 // 로그인 화면
@@ -46,6 +55,7 @@ class LoginFragment : Fragment(){
     lateinit var btnJoin : Button
     lateinit var btnKakao : ImageButton
     lateinit var btnNaver : OAuthLoginButton
+    lateinit var btnGoogle : SignInButton
 
     private var checkedId = false
     var socialUser = User()
@@ -55,6 +65,9 @@ class LoginFragment : Fragment(){
     val OAUTH_CLIENT_ID = "szowXGoW6mjaBusX181m"
     val OAUTH_CLIENT_SECRET = "idi_iJ2_Oi"
     val OAUTH_CLIENT_NAME = "ssafy_cafe_final"
+
+    var mAuth: FirebaseAuth?=null
+    var mGoogleSignInClient: GoogleSignInClient?=null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -76,6 +89,7 @@ class LoginFragment : Fragment(){
         btnJoin = view.findViewById(R.id.btnJoin)
         btnKakao = view.findViewById(R.id.btnKakao)
         btnNaver = view.findViewById(R.id.btnNaver)
+        btnGoogle = view.findViewById(R.id.btnGoogle)
 
         var id = view.findViewById<EditText>(R.id.editTextLoginID)
         var password = view.findViewById<EditText>(R.id.editTextLoginPW)
@@ -111,8 +125,6 @@ class LoginFragment : Fragment(){
                         loginActivity.openFragment(1)
 
                     }
-
-
                 }
             }
 
@@ -133,17 +145,85 @@ class LoginFragment : Fragment(){
         if (loginType.equals("naver")) {
             deleteSharedPreference()
             naverLogout()
+        } else if (loginType.equals("kakao")) {
+            deleteSharedPreference()
+            UserApiClient.instance.logout{}
+        } else if (loginType.equals("google")) {
+            deleteSharedPreference()
+            mGoogleSignInClient?.signOut()
+            mAuth?.signOut()
         }
 
-//        btnNaver.setOnClickListener {
-//            RequestApiTask(mContext, mOAuthLoginInstance).execute()
-//        }
+        btnGoogle.setOnClickListener {
+            initAuth()
+        }
     }
 
-    fun initNaverData() {
 
 
-//        btnNaver.setOAuthLoginHandler(mOAuthLoginHandler)
+    private fun initAuth() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.firebase_web_client_id))
+            .requestEmail()
+            .build()
+
+        mGoogleSignInClient = GoogleSignIn.getClient(activity, gso)
+
+        mAuth = FirebaseAuth.getInstance()
+        signIn()
+    }
+
+    private fun signIn() {
+        val signInIntent = mGoogleSignInClient!!.signInIntent
+        startActivityForResult(signInIntent, 100)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == 100) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                val account = task.getResult(ApiException::class.java)!!
+                Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
+                firebaseAuthWithGoogle(account.idToken!!)
+            } catch (e: ApiException) {
+                // Google Sign In failed, update UI appropriately
+                Log.w(TAG, "Google sign in failed", e)
+            }
+        }
+    }
+
+    private fun firebaseAuthWithGoogle(idToken: String?) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        mAuth?.signInWithCredential(credential)
+            ?.addOnCompleteListener(requireActivity()) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success")
+                    val user = mAuth?.currentUser
+
+                    Log.d(TAG, "user: ${user!!.displayName} ${user!!.email}")
+
+                    socialUser.id = "g" + user!!.email
+                    socialUser.name = user!!.displayName.toString()
+                    socialUser.pass = "pass" + user!!.email
+                    socialUser.stamps = 0
+
+                    UserService().isAvailable(socialUser.id, CheckIdCallback())
+
+                    ApplicationClass.sharedPreferencesUtil.addUser(socialUser)
+
+                    writeSharedPreference("google")
+
+                    loginActivity.openFragment(1)
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                }
+            }
     }
 
     private val mOAuthLoginHandler = @SuppressLint("HandlerLeak") object : OAuthLoginHandler() {
