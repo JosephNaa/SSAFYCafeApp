@@ -30,18 +30,29 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         // 앱이 foreground 상태에 있을 때 FCM 알림을 받았다면 onMessageReceived() 콜백 메소드가 호출됨으로써 FCM 알림이 대신된다.
         Log.d(TAG, "From: ${remoteMessage.from}")
 
+        var notificationInfo: Map<String, String> = mapOf()
+
         // 메시지 유형이 데이터 메시지일 경우
         // Check if message contains a data payload.
         var fcmData: String = ""
         if (remoteMessage.data.isNotEmpty()) {
             Log.d(TAG, "Message data payload: ${remoteMessage.data}")
             fcmData = remoteMessage.data.get("data").toString()
+
+            notificationInfo = mapOf(
+                "title" to remoteMessage.data["title"].toString(),
+                "body" to remoteMessage.data["body"].toString()
+            )
+
+            fcmList = readSharedPreference("fcm")
+            fcmList.add(remoteMessage.data["body"].toString())
+            writeSharedPreference("fcm", fcmList)
+            sendNotification(notificationInfo)
         }
 
         // 메시지 유형이 알림 메시지일 경우
         // Check if message contains a notification payload.
         // Set FCM title, body to android notification
-        var notificationInfo: Map<String, String> = mapOf()
         remoteMessage.notification?.let {
             notificationInfo = mapOf(
                 "title" to it.title.toString(),
