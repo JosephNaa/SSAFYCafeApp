@@ -55,7 +55,7 @@ class LoginFragment : Fragment(){
     lateinit var btnJoin : Button
     lateinit var btnKakao : ImageButton
     lateinit var btnNaver : OAuthLoginButton
-    lateinit var btnGoogle : SignInButton
+    lateinit var btnGoogle : ImageButton
 
     private var checkedId = false
     var socialUser = User()
