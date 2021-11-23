@@ -5,4 +5,5 @@
     <string name="api_key">AIzaSyCUWtEJlKghtYplIRZOvUHLuA_ZnprHGNw</string>
 
     <string name="kakao_app_key">893fb87760c2e752c580cb8e8725973a</string>
+    <string name="firebase_web_client_id">235843105005-vjsekl7jhnr8b0b58poq3vbs8ddfs8vr.apps.googleusercontent.com</string>
 </resources>
