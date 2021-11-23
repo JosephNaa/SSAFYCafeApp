@@ -60,6 +60,8 @@ class MypageFragment : Fragment() {
         userLastOrderLiveData.observe(viewLifecycleOwner, {
             list = it
 
+            Log.d(TAG, "initData: $it")
+
             orderAdapter = OrderAdapter(mainActivity, list)
             orderAdapter.setItemClickListener(object : OrderAdapter.ItemClickListener{
                 override fun onClick(view: View, position: Int, orderid:Int) {

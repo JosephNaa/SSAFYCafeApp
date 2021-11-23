@@ -45,8 +45,8 @@ class LatestOrderAdapter(val context: Context, var list: List<LatestOrderRespons
             }else{
                 textMenuNames.text = data.productName
             }
-            textMenuPrice.text = CommonUtils.makeComma(data.productPrice)
-            textMenuDate.text =  SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(data.orderDate)
+            textMenuPrice.text = CommonUtils.makeComma(data.totalPrice)
+            textMenuDate.text = CommonUtils.getFormattedString(data.orderDate)
 //            textCompleted.text = "픽업완료" // or 준비중
             //클릭연결
             itemView.setOnClickListener{

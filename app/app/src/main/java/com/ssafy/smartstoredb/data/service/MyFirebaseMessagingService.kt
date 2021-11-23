@@ -45,7 +45,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
             )
 
             fcmList = readSharedPreference("fcm")
-            fcmList.add(remoteMessage.data["body"].toString())
+            fcmList.add(0, remoteMessage.data["body"].toString())
             writeSharedPreference("fcm", fcmList)
             sendNotification(notificationInfo)
         }

@@ -105,4 +105,7 @@ dependencies {
 
     // Lottie
     implementation 'com.airbnb.android:lottie:4.2.1'
+
+    // Live Prefernces
+    implementation 'com.github.ibrahimsn98:live-preferences:1.9'
 }
