@@ -6,27 +6,39 @@
     android:layout_height="match_parent"
     tools:context=".ui.splash.SplashActivity">
 
-    <ImageView
-        android:id="@+id/ivLogo"
-        android:layout_width="243dp"
-        android:layout_height="311dp"
-        android:layout_marginBottom="128dp"
-        android:src="@drawable/logo"
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.561" />
+        app:lottie_autoPlay="true"
+        app:lottie_rawRes="@raw/coffee" />
 
-    <TextView
-        android:id="@+id/tvSplash"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="256dp"
-        style="@style/Text.Title"
-        android:text="SSAFY CAFE"
-        android:textSize="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+<!--    <ImageView-->
+<!--        android:id="@+id/ivLogo"-->
+<!--        android:layout_width="243dp"-->
+<!--        android:layout_height="311dp"-->
+<!--        android:layout_marginBottom="128dp"-->
+<!--        android:src="@drawable/logo"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintVertical_bias="0.561" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/tvSplash"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="256dp"-->
+<!--        style="@style/Text.Title"-->
+<!--        android:text="SSAFY CAFE"-->
+<!--        android:textSize="30dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
+
 </androidx.constraintlayout.widget.ConstraintLayout>
