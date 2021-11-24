@@ -37,12 +37,14 @@
         <item name="android:fontFamily">@font/eland_choice_m</item>
         <item name="android:includeFontPadding">false</item>
     </style>
+
     <style name="Text.Title" parent="android:TextAppearance">
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/coffee_dark_brown</item>
         <item name="android:fontFamily">@font/eland_choice_b</item>
         <item name="android:includeFontPadding">false</item>
     </style>
+
     <style name="Text.light" parent="android:TextAppearance">
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/coffee_dark_brown</item>
@@ -53,5 +55,13 @@
     <style name="BottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
         <item name="android:background">@color/coffee_brown</item>
     </style>
+
+    <style name="Theme.SmartstoreUI.AppWidgetContainerParent" parent="@android:style/Theme.DeviceDefault">
+        <item name="appWidgetRadius">8dp</item>
+        <item name="appWidgetPadding">4dp</item>
+        <item name="appWidgetInnerRadius">4dp</item>
+    </style>
+
+    <style name="Theme.SmartstoreUI.AppWidgetContainer" parent="Theme.SmartstoreUI.AppWidgetContainerParent" />
 
 </resources>

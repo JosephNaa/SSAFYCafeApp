@@ -15,4 +15,8 @@
     <color name="coffee_light_white">#FFFFFF</color>
     <color name="coffee_point_red">#9d0200</color>
     <color name="coffee_menu_back">#F0E3DB</color>
+    <color name="light_blue_50">#FFE1F5FE</color>
+    <color name="light_blue_200">#FF81D4FA</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="light_blue_900">#FF01579B</color>
 </resources>

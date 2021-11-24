@@ -30,6 +30,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartstoreUI"
         android:usesCleartextTraffic="true">
+        <receiver
+            android:name=".util.MyAppWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/my_app_widget_info" />
+        </receiver>
 
         <!-- Set custom default icon (메타 데이터 추가) -->
         <meta-data
@@ -41,6 +52,7 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
+
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="false" />
@@ -68,19 +80,21 @@
             </intent-filter>
         </service>
 
-        <meta-data android:name="com.kakao.sdk.AppKey"
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
 
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="oauth"
+
+                <data
+                    android:host="oauth"
                     android:scheme="kakao893fb87760c2e752c580cb8e8725973a" />
-
             </intent-filter>
-
         </activity>
     </application>
 
