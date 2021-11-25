@@ -43,7 +43,7 @@ class MypageFragment : Fragment() {
     ): View? {
         binding = FragmentMypageBinding.inflate(inflater, container, false)
         val loginType = readSharedPreference()
-        Toast.makeText(context, "" + loginType, Toast.LENGTH_SHORT).show()
+//        Toast.makeText(context, "" + loginType, Toast.LENGTH_SHORT).show()
         return binding.root
     }
 
@@ -99,7 +99,7 @@ class MypageFragment : Fragment() {
             code: Int,
             responseData: HashMap<String, Any>
         ) {
-            Toast.makeText(context, "유저 정보 불러오기 완료", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(context, "유저 정보 불러오기 완료", Toast.LENGTH_SHORT).show()
             //Log.d(TAG, "onSuccess: ${responseData}")
             setMembershipLevel(responseData["grade"].toString())
         }
