@@ -32,8 +32,7 @@
     - MySQL
 
 ## 일정
-
-- 이미지 넣기
+<img width=90% src=https://user-images.githubusercontent.com/17241871/143453674-a4c86510-833f-4468-b205-aa876fe71890.png>
 
 ## 주요 기능
 - 코드 리팩토링(Coroutine + Retrofit2)
