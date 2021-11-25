@@ -16,17 +16,22 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.liveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.model.LatLng
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import com.ssafy.smartstore.util.RetrofitCallback
+import com.ssafy.smartstore.util.RetrofitUtil
 import com.ssafy.smartstoredb.databinding.FragmentOrderBinding
 import com.ssafy.smartstoredb.model.dto.Product
 import com.ssafy.smartstoredb.data.service.ProductService
 import com.ssafy.smartstoredb.ui.main.MainActivity
 import com.ssafy.smartstoredb.ui.main.order.adapter.MenuAdapter
+import retrofit2.Response
 
 // 하단 주문 탭
 private const val TAG = "OrderFragment_싸피"
@@ -199,7 +204,33 @@ class OrderFragment : Fragment(){
     }
 
     private fun initData(){
-        ProductService().getProductList(ProductCallback())
+        val responseLiveData: LiveData<Response<List<Product>>> = liveData {
+            val response = RetrofitUtil.productService.getProductList()
+            emit(response)
+        }
+
+        responseLiveData.observe(viewLifecycleOwner, Observer {
+            val productList = it.body()!!
+            productList.let {
+                Log.d(TAG, "onSuccess: ${productList}")
+                menuAdapter = MenuAdapter(productList)
+                menuAdapter.setItemClickListener(object : MenuAdapter.ItemClickListener{
+                    override fun onClick(view: View, position: Int, productId:Int) {
+                        mainActivity.openFragment(3, "productId", productId)
+                    }
+                })
+            }
+
+            binding.recyclerViewMenu.apply {
+                layoutManager = GridLayoutManager(context,3)
+                adapter = menuAdapter
+                //원래의 목록위치로 돌아오게함
+                adapter!!.stateRestorationPolicy =
+                    RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            }
+
+            Log.d(TAG, "ProductCallback: $productList")
+        })
     }
 
     inner class ProductCallback: RetrofitCallback<List<Product>> {
