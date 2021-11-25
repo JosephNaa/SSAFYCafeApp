@@ -14,16 +14,6 @@ import retrofit2.Response
 private const val TAG = "UserService_싸피"
 
 class ProductService {
-
-    fun getProductList() {
-        val retService = RetrofitUtil.productService
-
-        val responseLiveData: LiveData<Response<List<Product>>> = liveData {
-            val response = retService.getProductList()
-            emit(response)
-        }
-    }
-
 //    fun getProductList(callback: RetrofitCallback<List<Product>>)  {
 //        val menuInfoRequest: Call<List<Product>> = RetrofitUtil.productService.getProductList()
 //        menuInfoRequest.enqueue(object : Callback<List<Product>> {

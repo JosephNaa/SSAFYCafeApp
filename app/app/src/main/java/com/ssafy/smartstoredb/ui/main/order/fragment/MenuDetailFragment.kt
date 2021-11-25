@@ -1,9 +1,7 @@
 package com.ssafy.smartstoredb.ui.main.order.fragment
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,26 +13,21 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.ssafy.smartstore.adapter.CommentListener
 import com.ssafy.smartstore.dto.ShoppingCart
 import com.ssafy.smartstore.response.MenuDetailWithCommentResponse
 import com.ssafy.smartstore.util.RetrofitCallback
 import com.ssafy.smartstore.util.RetrofitUtil
 import com.ssafy.smartstoredb.R
 import com.ssafy.smartstoredb.config.ApplicationClass
-import com.ssafy.smartstoredb.data.service.CommentService
 import com.ssafy.smartstoredb.ui.main.order.adapter.CommentAdapter
 import com.ssafy.smartstoredb.databinding.FragmentMenuDetailBinding
 import com.ssafy.smartstoredb.model.dto.Product
-import com.ssafy.smartstoredb.data.service.OrderService
-import com.ssafy.smartstoredb.data.service.ProductService
 import com.ssafy.smartstoredb.data.service.UserService
 import com.ssafy.smartstoredb.model.dto.Comment
 import com.ssafy.smartstoredb.ui.main.MainActivity
@@ -134,7 +127,6 @@ class MenuDetailFragment : Fragment(){
 
     //MutableLiveData<List<MenuDetailWithCommentResponse>>
     private fun initData(){
-         //ProductService().getProductWithComments(productId, ProductWithCommentInsertCallback())
         val responseLiveData: LiveData<Response<List<MenuDetailWithCommentResponse>>> = liveData {
             val response = RetrofitUtil.productService.getProductWithComments(productId)
             emit(response)
@@ -292,7 +284,6 @@ class MenuDetailFragment : Fragment(){
             val user = ApplicationClass.sharedPreferencesUtil.getUser()
             val comment = Comment(-1, user.id, productId, rating.rating, binding.comment.text.toString())
             UserService().insertComment(comment, CommentCallback()).let {
-                // ProductService().getProductWithComments(productId, ProductWithCommentInsertCallback())
                 initData()
             }
 
@@ -333,42 +324,6 @@ class MenuDetailFragment : Fragment(){
                     putInt(key, value)
                 }
             }
-    }
-
-
-    inner class ProductWithCommentInsertCallback: RetrofitCallback<List<MenuDetailWithCommentResponse>> {
-        override fun onSuccess(
-            code: Int,
-            responseData: List<MenuDetailWithCommentResponse>
-        ) {
-            if(responseData.isNotEmpty()) {
-
-                Log.d(TAG, "onSuccess: ${responseData}")
-
-                // comment 가 없을 경우 -> 들어온 response가 1개이고 해당 userId 가 null일 경우 빈 배열 Adapter 연결
-                commentAdapter = if (responseData.size == 1 && responseData[0].userId == null) {
-                    CommentAdapter(emptyList())
-                } else {
-                    Log.d(TAG, "onSuccess_responsedata: $responseData")
-                    CommentAdapter(responseData)
-                }
-                initAdapter()
-
-                commentAdapter.updateAdapter(responseData)
-
-                // 화면 정보 갱신
-                setScreen(responseData[0])
-            }
-
-        }
-
-        override fun onError(t: Throwable) {
-            Log.d(TAG, t.message ?: "물품 정보 받아오는 중 통신오류")
-        }
-
-        override fun onFailure(code: Int) {
-            Log.d(TAG, "onResponse: Error Code $code")
-        }
     }
 
     private fun getUserData():String{
