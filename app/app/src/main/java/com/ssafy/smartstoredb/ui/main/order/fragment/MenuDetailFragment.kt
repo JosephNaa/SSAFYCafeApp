@@ -205,14 +205,14 @@ class MenuDetailFragment : Fragment(){
                 totalPrice = menuCnt * menuPrice
 
                 viewModel.addShoppingItem(ShoppingCart(menuId, menuImg, menuName, menuCnt, menuPrice, totalPrice, menuType))
-                Toast.makeText(context,"상품이 장바구니에 담겼습니다.",Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context,"상품이 장바구니에 담겼습니다.",Toast.LENGTH_SHORT).show()
                 mainActivity.supportFragmentManager.beginTransaction()
                     .replace(R.id.frame_layout_main, OrderFragment())
                     .addToBackStack(null)
                     .commit()
                 mainActivity.hideBottomNav(false)
 
-                Toast.makeText(context, "상품이 장바구니에 담겼습니다.", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context, "상품이 장바구니에 담겼습니다.", Toast.LENGTH_SHORT).show()
             }
         }
         binding.btnCreateComment.setOnClickListener {
