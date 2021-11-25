@@ -30,8 +30,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartstoreUI"
         android:usesCleartextTraffic="true">
+        <service
+            android:name=".util.MyRemoteViewsService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
         <receiver
-            android:name=".util.MyAppWidget"
+            android:name=".util.MyAppWidgetProvider"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -40,9 +46,7 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/my_app_widget_info" />
-        </receiver>
-
-        <!-- Set custom default icon (메타 데이터 추가) -->
+        </receiver> <!-- Set custom default icon (메타 데이터 추가) -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_launcher_foreground" /> <!-- Set color used with incoming notification messages (메타 데이터 추가) -->

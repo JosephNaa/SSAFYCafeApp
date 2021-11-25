@@ -1,5 +1,7 @@
 package com.ssafy.smartstoredb.ui.main.home.fragment
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -17,6 +19,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.ssafy.smartstore.response.LatestOrderResponse
 import com.ssafy.smartstore.util.RetrofitCallback
+import com.ssafy.smartstoredb.R
 import com.ssafy.smartstoredb.config.ApplicationClass
 import com.ssafy.smartstoredb.data.service.OrderService
 import com.ssafy.smartstoredb.data.service.UserService
@@ -25,6 +28,7 @@ import com.ssafy.smartstoredb.ui.main.home.adapter.NoticeAdapter
 import com.ssafy.smartstoredb.databinding.FragmentHomeBinding
 import com.ssafy.smartstoredb.ui.main.MainActivity
 import com.ssafy.smartstoredb.ui.main.SP_NAME
+import com.ssafy.smartstoredb.util.MyAppWidgetProvider
 import me.ibrahimsn.library.LiveSharedPreferences
 
 // Home 탭
@@ -97,7 +101,10 @@ class HomeFragment : Fragment(){
         val sharedPreferences = binding.root.context.getSharedPreferences(SP_NAME, FirebaseMessagingService.MODE_PRIVATE)
         val liveSharedPreferences = LiveSharedPreferences(sharedPreferences)
         
-
+        val appWidgetManager = AppWidgetManager.getInstance(activity)
+        val appWidgetIds = appWidgetManager.getAppWidgetIds(
+            ComponentName(requireActivity(), MyAppWidgetProvider::class.java)
+        )
         
         noticeAdapter = NoticeAdapter()
         binding.recyclerViewNoticeOrder.apply {
@@ -113,6 +120,8 @@ class HomeFragment : Fragment(){
         liveSharedPreferences.getString("fcm", "default").observe(requireActivity(), Observer { value ->
             Log.d(TAG, "liveSP: $value")
             noticeAdapter.update(readSharedPreference("fcm"))
+
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listView_notice)
         })
 
         latestOrderAdapter = LatestOrderAdapter(mainActivity, mutableListOf())

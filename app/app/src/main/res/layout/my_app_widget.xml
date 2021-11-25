@@ -1,9 +1,8 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Widget.Smartstore_Componentstarter.AppWidget.Container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:theme="@style/Theme.SmartstoreUI.AppWidgetContainer"
     android:orientation="vertical">
 
@@ -11,18 +10,9 @@
         android:id="@+id/listView_notice"
         style="@style/Widget.Smartstore_Componentstarter.AppWidget.InnerView"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="200dp"
         android:background="@drawable/textview_regular"
-        tools:listitem="@layout/list_item_notice" />
+        tools:listitem="@layout/list_item_widget"
+        />
 
-    <TextView
-        android:id="@+id/example_widget_empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
-        android:gravity="center"
-        android:text="Empty"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:textStyle="bold" />
 </LinearLayout>
