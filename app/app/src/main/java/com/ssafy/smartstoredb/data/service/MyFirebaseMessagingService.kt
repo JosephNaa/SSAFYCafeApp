@@ -4,6 +4,8 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
@@ -19,6 +21,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.ssafy.smartstoredb.R
 import com.ssafy.smartstoredb.ui.main.MainActivity
+import com.ssafy.smartstoredb.util.MyAppWidgetProvider
 import java.util.*
 
 class MyFirebaseMessagingService: FirebaseMessagingService() {
@@ -33,6 +36,11 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         Log.d(TAG, "From: ${remoteMessage.from}")
 
         var notificationInfo: Map<String, String> = mapOf()
+
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        val appWidgetIds = appWidgetManager.getAppWidgetIds(
+            ComponentName(this, MyAppWidgetProvider::class.java)
+        )
 
         // 메시지 유형이 데이터 메시지일 경우
         // Check if message contains a data payload.
@@ -49,6 +57,9 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
             fcmList = readSharedPreference("fcm")
             fcmList.add(0, remoteMessage.data["body"].toString())
             writeSharedPreference("fcm", fcmList)
+
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listView_notice)
+
             sendNotification(notificationInfo)
         }
 
