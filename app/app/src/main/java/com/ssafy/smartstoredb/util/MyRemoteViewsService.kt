@@ -27,12 +27,4 @@ class MyRemoteViewsService : RemoteViewsService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-//    fun buildStartIntent(context: Context): PendingIntent? {
-//        val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
-//        val appWidgetIds = AppWidgetManager.getInstance(context).getAppWidgetIds(
-//            ComponentName(context.packageName, MyAppWidgetProvider::class.java.name)
-//        )
-//        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds)
-//        context.sendBroadcast(intent)
-//    }
 }

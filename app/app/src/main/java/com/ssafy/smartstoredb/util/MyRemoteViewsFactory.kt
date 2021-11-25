@@ -56,10 +56,6 @@ class MyRemoteViewsFactory(context: Context) : RemoteViewsService.RemoteViewsFac
         dataIntent.putExtra("item_data", list.get(position).content)
         listViewWidget.setOnClickFillInIntent(R.id.text1, dataIntent)
 
-//        val fillIntent = Intent()
-//        fillIntent.putExtra("extraItemPosition", position)
-//        listViewWidget.setOnClickFillInIntent(R.id.text1, fillIntent)
-
         return listViewWidget
     }
 
